@@ -77,8 +77,12 @@ describe('end-to-end flow (mocked APIs)', () => {
     expect(await screen.findByRole('button', { name: /TikTok @janedoe: Not mine/ })).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /see my summary/i }));
-    expect(await screen.findByRole('heading', { name: /your footprint/i })).toBeInTheDocument();
-    expect(screen.getByText(/profiles you confirmed/).textContent).toMatch(/^2 profiles you confirmed/);
+    expect(await screen.findByRole('heading', { name: /your next steps/i })).toBeInTheDocument();
+    expect(screen.getByText(/profiles confirmed/).textContent).toMatch(/^2 profiles confirmed/);
+    // Confirmed profiles are tucked away until asked for.
+    expect(screen.queryAllByRole('article')).toHaveLength(0);
+    await user.click(screen.getByRole('button', { name: /show confirmed profiles \(2\)/i }));
+    expect(screen.getAllByRole('article')).toHaveLength(2);
     expect(screen.getByRole('heading', { name: /remove your personal email or phone number from instagram/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /username reuse/i }).nextElementSibling).toHaveTextContent(/janedoe is yours on GitHub and Instagram/);
 
