@@ -255,13 +255,38 @@ export function SummaryStep() {
           <section className="profiles-toggle-wrap" aria-label="Confirmed profiles">
             <button
               type="button"
-              className="btn btn-ghost profiles-toggle"
+              className={`profiles-cta${showProfiles ? ' is-open' : ''}`}
               aria-expanded={showProfiles}
               aria-controls="confirmed-profiles"
               onClick={() => setShowProfiles((v) => !v)}
             >
-              <Icon name={showProfiles ? 'eye-off' : 'eye'} size={16} />
-              {showProfiles ? 'Hide' : 'Show'} confirmed profiles ({mine.length})
+              {showProfiles ? (
+                <span className="profiles-cta-title">
+                  <Icon name="eye-off" size={18} /> Hide confirmed profiles
+                </span>
+              ) : (
+                <>
+                  <span className="profiles-cta-logos" aria-hidden="true">
+                    {[...new Set(mine.map((m) => m.platform))].slice(0, 5).map((p) => (
+                      <span key={p} className="profiles-cta-logo">
+                        <PlatformLogo platform={p} size={18} />
+                      </span>
+                    ))}
+                  </span>
+                  <span className="profiles-cta-text">
+                    <span className="profiles-cta-title">
+                      Review your confirmed{' '}
+                      <span className="nowrap">
+                        profiles <span className="profiles-cta-count">{mine.length}</span>
+                      </span>
+                    </span>
+                    <span className="profiles-cta-sub">See what each one shows. Keep, edit or delete.</span>
+                  </span>
+                  <span className="profiles-cta-arrow" aria-hidden="true">
+                    <Icon name="chevron" size={24} />
+                  </span>
+                </>
+              )}
             </button>
             {showProfiles && (
               <div id="confirmed-profiles" className="profiles-panel">
