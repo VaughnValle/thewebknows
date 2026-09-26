@@ -25,8 +25,9 @@
   color-scheme: light;
 }
 
+/* Dark palette: follows the device unless the header toggle picked a theme. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --bg: #000000;
     --fg: #f5f5f5;
     --muted: #8d8d8d;
@@ -37,6 +38,27 @@
     --notmine-fg: #6e6e6e;
     color-scheme: dark;
   }
+}
+:root[data-theme='dark'] {
+  --bg: #000000;
+  --fg: #f5f5f5;
+  --muted: #8d8d8d;
+  --line: #232323;
+  --soft: #0f0f0f;
+  --soft-2: #1a1a1a;
+  --notmine: #111111;
+  --notmine-fg: #6e6e6e;
+  color-scheme: dark;
+}
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+/* Smooth cross-fade only while switching, so nothing else animates unexpectedly. */
+:root.theme-switching,
+:root.theme-switching *,
+:root.theme-switching *::before,
+:root.theme-switching *::after {
+  transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, fill 0.35s ease, stroke 0.35s ease !important;
 }
 
 *,
@@ -2594,3 +2616,21 @@ details[open] > :not(summary) {
   vertical-align: 0.12em;
 }
 .nowrap { white-space: nowrap; }
+
+/* ---------- Theme toggle ---------- */
+
+.theme-toggle {
+  width: 36px;
+  min-height: 34px;
+  padding: 0;
+  overflow: hidden;
+}
+.theme-toggle .icon {
+  animation: theme-spin 0.5s var(--ease);
+}
+@keyframes theme-spin {
+  from {
+    transform: rotate(-90deg) scale(0.4);
+    opacity: 0;
+  }
+}

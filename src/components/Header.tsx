@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Icon } from './Icon';
 import { ClearButton, ExportPanel } from './SessionTools';
 import { Stepper } from './Stepper';
+import { ThemeToggle } from './ThemeToggle';
 import { useSession } from '../session/SessionContext';
 
 export function Logo() {
@@ -40,6 +41,7 @@ export function Header() {
             </button>
           )}
           {hasSession && <ClearButton className="btn btn-ghost btn-sm" label="Clear" />}
+          <ThemeToggle />
         </div>
       </div>
       <span className="header-progress" style={{ width: `${STEP_PROGRESS[state.step] * 100}%` }} aria-hidden="true" />

@@ -149,4 +149,14 @@ describe('end-to-end flow (mocked APIs)', () => {
     expect(setItem).not.toHaveBeenCalled();
     expect(document.cookie).toBe('');
   });
+
+  it('toggles dark mode without storing anything', async () => {
+    const setItem = vi.spyOn(Storage.prototype, 'setItem');
+    const { user } = setup([]);
+    await user.click(screen.getByRole('button', { name: /switch to dark mode/i }));
+    expect(document.documentElement.dataset.theme).toBe('dark');
+    await user.click(screen.getByRole('button', { name: /switch to light mode/i }));
+    expect(document.documentElement.dataset.theme).toBe('light');
+    expect(setItem).not.toHaveBeenCalled();
+  });
 });

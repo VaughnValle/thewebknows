@@ -12,6 +12,8 @@ export type IconName =
   | 'link'
   | 'spinner'
   | 'eye'
+  | 'sun'
+  | 'moon'
   | 'eye-off'
   | 'shield'
   | 'download'
@@ -77,6 +79,13 @@ const paths: Record<IconName, ReactElement> = {
       <path d="M9.9 9.9a2.8 2.8 0 0 0 4.2 4.2" />
     </>
   ),
+  sun: (
+    <>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4" />
+    </>
+  ),
+  moon: <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />,
   shield: <path d="M12 3l7 3v5.5c0 4.3-3 8-7 9.5-4-1.5-7-5.2-7-9.5V6l7-3z" />,
   download: <path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19h14" />,
   trash: <path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12" />,
