@@ -14,7 +14,7 @@ npm run preview
 
 ## Deploy
 
-`.github/workflows/deploy.yml` tests, builds and publishes to GitHub Pages on every push to `initial-scaffold`. You need to turn it on once: **Settings → Pages → Source: GitHub Actions**. The site is served at `https://vaughnvalle.github.io/thewebknows/`. If you move it to `thewebknows.me`, change `--base=/thewebknows/` to `--base=/` in the workflow.
+Hosted on Cloudflare Pages at https://thewebknows.me. Cloudflare builds from GitHub on every push (`npm run build` → `dist/`). The build also writes `dist/_headers` with the security headers. Setup steps are in [DEPLOY.md](DEPLOY.md).
 
 ## How it works
 
@@ -51,4 +51,3 @@ Every candidate gets **Mine / Not mine / Unsure** from the user. A profile marke
 
 - Click through every link in `src/data/guides.json` in a real browser. They were found on each platform's official help domain on 2026-09-26, but settings pages move. Update `lastReviewed` when you check them.
 - Re-check GitHub and Bluesky API terms and quotas.
-- Serve the CSP as an HTTP header too if your host supports it (a meta tag can't set `frame-ancestors`).
