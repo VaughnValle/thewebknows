@@ -63,7 +63,7 @@ export function buildExport(state: SessionState, options: ExportOptions, now = n
     suggestion: options.includeHandles ? f.title : f.title.replace(/\s\(@[^)]+\)/, ''),
     basis: f.basis,
     guide: f.guide?.url ?? null,
-    status: state.done[f.id] ? 'Done (user-reported)' : 'Not marked done',
+    status: state.done[f.id] ? 'Done' : 'Not marked done',
   }));
 
   return {
@@ -119,6 +119,6 @@ export function exportAsText(state: SessionState, options: ExportOptions): strin
       }
     }
   }
-  lines.push('', 'Progress marked "done" is user-reported. The Web Knows Me does not change or delete anything on other sites.');
+  lines.push('', 'The Web Knows Me does not change or delete anything on other sites.');
   return lines.join('\n');
 }
