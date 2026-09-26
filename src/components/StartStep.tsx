@@ -1,6 +1,7 @@
 import { useMemo, useState, type FormEvent } from 'react';
 import { Constellation } from './Constellation';
 import { Icon } from './Icon';
+import { RevealWord } from './RevealWord';
 import { Segmented } from './Segmented';
 import { useSession } from '../session/SessionContext';
 import { MAX_DISPLAY_NAME, MAX_LINKS, MAX_USERNAMES, splitUsernamesAndLinks } from '../lib/platforms/candidates';
@@ -53,9 +54,9 @@ export function StartStep() {
             {w}&nbsp;
           </span>
         ))}
-        <em className="w" style={{ ['--i' as string]: HEADLINE.length }}>
-          reveal.
-        </em>
+        <span className="w" style={{ ['--i' as string]: HEADLINE.length }}>
+          <RevealWord word="reveal." />
+        </span>
       </h1>
 
       <p className="hero-sub">Free. No account. Nothing saved.</p>

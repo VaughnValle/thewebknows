@@ -313,7 +313,7 @@ export function ReviewStep() {
         {notFound.length > 0 && (
           <p className="skipped">
             <Icon name="dash-circle" size={14} /> Not found by API:{' '}
-            {notFound.map((n) => `${platformName(n.platform)} ${cardTitle(n)}`).join(', ')} — this exact username only.
+            {notFound.map((n) => `${platformName(n.platform)} ${cardTitle(n)}`).join(', ')}. This covers that exact username only.
           </p>
         )}
         {run.linkErrors.length > 0 && (

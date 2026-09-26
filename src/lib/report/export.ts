@@ -21,7 +21,7 @@ export const DEFAULT_EXPORT_OPTIONS: ExportOptions = {
 const IDENTITY_LABEL = { mine: 'Mine', 'not-mine': 'Not mine', unsure: 'Unsure', awaiting: 'Awaiting review' } as const;
 const RETRIEVAL_LABEL = {
   'api-returned': 'Public profile returned by supported API',
-  candidate: 'Candidate link — not checked automatically',
+  candidate: 'Candidate link, not checked automatically',
   'user-reviewed': 'User-reviewed',
   'not-found': 'Not found by this supported check',
   unable: 'Unable to check',
@@ -67,7 +67,7 @@ export function buildExport(state: SessionState, options: ExportOptions, now = n
   }));
 
   return {
-    app: 'The Web Knows Me — thewebknows.me',
+    app: 'The Web Knows Me (thewebknows.me)',
     exportedAt: now.toISOString(),
     about:
       'A private self-check. "API-confirmed" means a supported public API returned it. Everything else is your own review. Candidate links are not found accounts, and a shared username is not proof that accounts belong to the same person.',
@@ -92,7 +92,7 @@ export function exportAsJson(state: SessionState, options: ExportOptions): strin
 export function exportAsText(state: SessionState, options: ExportOptions): string {
   const data = buildExport(state, options);
   const lines: string[] = [];
-  lines.push('THE WEB KNOWS ME — your footprint checklist', `Exported ${new Date(data.exportedAt).toLocaleString()}`, '');
+  lines.push('THE WEB KNOWS ME: your footprint checklist', `Exported ${new Date(data.exportedAt).toLocaleString()}`, '');
   lines.push(data.about, '');
   lines.push(
     `${data.counts.profilesYouConfirmed} profiles you confirmed · ${data.counts.profilesAwaitingReview} awaiting review · ${data.counts.selectedPrivacyActions} selected privacy actions`,
@@ -110,7 +110,7 @@ export function exportAsText(state: SessionState, options: ExportOptions): strin
   if (!data.profiles.length) lines.push('(none included)');
   for (const p of data.profiles) {
     const name = 'handle' in p ? (p.handle ? `@${p.handle}` : `search: ${p.searchTerms}`) : p.label;
-    lines.push(`- ${p.platform} ${name} — ${p.identity}`, `    ${p.retrieval}`);
+    lines.push(`- ${p.platform} ${name}: ${p.identity}`, `    ${p.retrieval}`);
     if ('link' in p) lines.push(`    ${p.link}`);
     if ('plan' in p) lines.push(`    Plan: ${p.plan}`);
     if ('fields' in p && p.fields) {

@@ -26,7 +26,7 @@ export function Header() {
   return (
     <header className="site-header">
       <div className="site-header-inner">
-        <a href="#main" className="brand" aria-label="The Web Knows Me — home">
+        <a href="#main" className="brand" aria-label="The Web Knows Me, home">
           <Logo />
           <span className="brand-name">
             thewebknows<em>.me</em>

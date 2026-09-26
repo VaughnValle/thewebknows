@@ -34,9 +34,12 @@ export function App() {
       </div>
       <footer className="site-footer">
         <p>
-          <strong>The Web Knows Me</strong> — a free self-check for your own public profiles.
+          <strong>The Web Knows Me</strong> · A free self-check for your digital footprint.
         </p>
-        <p>No accounts · no cookies · no analytics · no server. We never change anything on other sites.</p>
+        <p>
+          No accounts, personal data, cookies or analytics collected. A free static tool that only looks at data that’s already
+          public, and stores none of it.
+        </p>
       </footer>
     </>
   );
