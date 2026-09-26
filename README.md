@@ -12,6 +12,10 @@ npm run build      # static site in dist/ — deploy to any static host
 npm run preview
 ```
 
+## Deploy
+
+`.github/workflows/deploy.yml` tests, builds and publishes to GitHub Pages on every push to `initial-scaffold`. You need to turn it on once: **Settings → Pages → Source: GitHub Actions**. The site is served at `https://vaughnvalle.github.io/thewebknows/`. If you move it to `thewebknows.me`, change `--base=/thewebknows/` to `--base=/` in the workflow.
+
 ## How it works
 
 | Platforms | Behavior | What the UI claims |
