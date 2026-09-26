@@ -1,0 +1,66 @@
+{
+  "version": "2026-09-26",
+  "reviewNote": "Destinations located on each platform's official help domain on 2026-09-26. Settings pages can change; re-check before each release.",
+  "guides": {
+    "github": {
+      "lastReviewed": "2026-09-26",
+      "editProfile": { "label": "Edit your public profile", "url": "https://github.com/settings/profile" },
+      "privacy": { "label": "Keep your email address private", "url": "https://docs.github.com/en/account-and-profile/how-tos/email-preferences/setting-your-commit-email-address" },
+      "oldPosts": { "label": "Account & profile help", "url": "https://docs.github.com/en/account-and-profile/how-tos" },
+      "deletion": { "label": "Deleting your personal account", "url": "https://docs.github.com/en/account-and-profile/how-tos/account-management/deleting-your-personal-account" },
+      "note": "GitHub profile fields (name, company, location, email, website) are public once filled in. Commits can also carry an email address."
+    },
+    "bluesky": {
+      "lastReviewed": "2026-09-26",
+      "editProfile": { "label": "Bluesky help center", "url": "https://blueskyweb.zendesk.com/hc/en-us" },
+      "privacy": { "label": "Bluesky data privacy", "url": "https://blueskyweb.zendesk.com/hc/en-us/articles/15835264007693-Data-Privacy" },
+      "oldPosts": { "label": "Bluesky user FAQ", "url": "https://blueskyweb.zendesk.com/hc/en-us/sections/15835270950925-Bluesky-User-FAQ" },
+      "deletion": { "label": "Delete or deactivate your account", "url": "https://blueskyweb.zendesk.com/hc/en-us/articles/44879257093645-How-to-delete-deactivate-my-account" },
+      "note": "Bluesky has no private profiles: posts, likes and follows are public by design."
+    },
+    "instagram": {
+      "lastReviewed": "2026-09-26",
+      "editProfile": { "label": "Edit your profile", "url": "https://help.instagram.com/583107688369069" },
+      "privacy": { "label": "Make your account private", "url": "https://help.instagram.com/448523408565555" },
+      "oldPosts": { "label": "Archive a post", "url": "https://help.instagram.com/136706673552668" },
+      "deletion": { "label": "Delete or deactivate your profile", "url": "https://help.instagram.com/139886812848894" }
+    },
+    "tiktok": {
+      "lastReviewed": "2026-09-26",
+      "editProfile": { "label": "Account information help", "url": "https://support.tiktok.com/en/account-and-privacy/account-information" },
+      "privacy": { "label": "Public or private account", "url": "https://support.tiktok.com/en/account-and-privacy/account-privacy-settings/making-your-account-public-or-private" },
+      "oldPosts": { "label": "Editing, posting and deleting videos", "url": "https://support.tiktok.com/en/using-tiktok/creating-videos/editing-posting-and-deleting" },
+      "deletion": { "label": "Deactivate or delete your account", "url": "https://support.tiktok.com/en/account-and-privacy/deleting-an-account" }
+    },
+    "x": {
+      "lastReviewed": "2026-09-26",
+      "editProfile": { "label": "Customize your profile", "url": "https://help.x.com/en/managing-your-account/how-to-customize-your-profile" },
+      "privacy": { "label": "Protect your posts", "url": "https://help.x.com/en/safety-and-security/how-to-make-x-private-and-public" },
+      "oldPosts": { "label": "Delete a post", "url": "https://help.x.com/en/using-x/delete-posts" },
+      "deletion": { "label": "Deactivate your account", "url": "https://help.x.com/en/managing-your-account/how-to-deactivate-x-account" }
+    },
+    "facebook": {
+      "lastReviewed": "2026-09-26",
+      "editProfile": { "label": "Edit profile info and who sees it", "url": "https://www.facebook.com/help/276177272409629" },
+      "privacy": { "label": "Privacy Checkup", "url": "https://www.facebook.com/help/443357099140264" },
+      "oldPosts": { "label": "Archive or delete old content", "url": "https://www.facebook.com/help/3094200253964092" },
+      "deletion": { "label": "Permanently delete your profile", "url": "https://www.facebook.com/help/224562897555674" },
+      "contact": { "label": "Control who sees your contact info", "url": "https://www.facebook.com/help/117118145038822" }
+    },
+    "linkedin": {
+      "lastReviewed": "2026-09-26",
+      "editProfile": { "label": "Edit your profile", "url": "https://www.linkedin.com/help/linkedin/answer/a546603" },
+      "privacy": { "label": "Control your public profile", "url": "https://www.linkedin.com/help/linkedin/answer/a528138" },
+      "oldPosts": { "label": "Delete content you've shared", "url": "https://www.linkedin.com/help/linkedin/answer/a523181" },
+      "deletion": { "label": "Close your account", "url": "https://www.linkedin.com/help/linkedin/answer/a1379064" }
+    },
+    "reddit": {
+      "lastReviewed": "2026-09-26",
+      "editProfile": { "label": "Update your profile settings", "url": "https://support.reddithelp.com/hc/en-us/articles/360043471231-How-do-I-update-my-profile-settings" },
+      "privacy": { "label": "Privacy & account settings", "url": "https://support.reddithelp.com/hc/en-us/sections/360010399332-Privacy-Account-Settings" },
+      "oldPosts": { "label": "Delete a post", "url": "https://support.reddithelp.com/hc/en-us/articles/360043483071-How-do-I-delete-a-post" },
+      "deletion": { "label": "Delete your account", "url": "https://support.reddithelp.com/hc/en-us/articles/204579509-How-do-I-delete-my-account" },
+      "note": "Posts and comments stay on Reddit after account deletion unless you delete them first."
+    }
+  }
+}
