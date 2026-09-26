@@ -2437,3 +2437,160 @@ details[open] > :not(summary) {
   gap: 4px;
   margin-top: 2px;
 }
+
+/* ---------- "Review your confirmed profiles" call to action ---------- */
+
+.profiles-cta {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: clamp(18px, 3vw, 26px) clamp(20px, 3vw, 30px);
+  border: 0;
+  border-radius: calc(var(--radius) + 6px);
+  background: var(--fg);
+  color: var(--bg);
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s var(--ease), box-shadow 0.3s var(--ease);
+  box-shadow: 0 24px 50px -30px rgba(0, 0, 0, 0.55);
+}
+.profiles-cta::after {
+  /* a slow sheen that invites a click */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 30%, color-mix(in srgb, var(--bg) 16%, transparent) 50%, transparent 70%);
+  transform: translateX(-100%);
+  animation: sheen 3.6s var(--ease) 1.2s infinite;
+  pointer-events: none;
+}
+@keyframes sheen {
+  0%,
+  55% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+.profiles-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 30px 60px -28px rgba(0, 0, 0, 0.6);
+}
+.profiles-cta:active {
+  transform: scale(0.99);
+}
+.profiles-cta:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 4px;
+}
+.profiles-cta-logos {
+  display: flex;
+  flex: none;
+}
+.profiles-cta-logo {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--fg);
+  border: 2px solid var(--fg);
+}
+.profiles-cta-logo + .profiles-cta-logo {
+  margin-left: -12px;
+}
+.profiles-cta-text {
+  display: grid;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+.profiles-cta-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+.profiles-cta-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 99px;
+  background: var(--mine);
+  color: var(--on-status);
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+.profiles-cta-sub {
+  font-size: 0.92rem;
+  opacity: 0.7;
+}
+.profiles-cta-arrow {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--fg);
+  animation: nudge 1.8s var(--ease) infinite;
+}
+@keyframes nudge {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+.profiles-cta.is-open {
+  justify-content: center;
+  background: transparent;
+  color: var(--muted);
+  border: 1.5px solid var(--line);
+  box-shadow: none;
+  padding: 12px 20px;
+}
+.profiles-cta.is-open::after {
+  display: none;
+}
+.profiles-cta.is-open .profiles-cta-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.profiles-cta.is-open:hover {
+  color: var(--fg);
+  border-color: var(--fg);
+  transform: none;
+}
+@media (max-width: 520px) {
+  .profiles-cta-logos {
+    display: none;
+  }
+  .profiles-cta-arrow {
+    width: 38px;
+    height: 38px;
+  }
+}
+.profiles-cta-text .profiles-cta-title {
+  display: block;
+}
+.profiles-cta-text .profiles-cta-count {
+  margin-left: 6px;
+  vertical-align: 0.12em;
+}
+.nowrap { white-space: nowrap; }
