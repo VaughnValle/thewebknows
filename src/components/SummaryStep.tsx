@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ExternalLink } from './ExternalLink';
 import { Icon, type IconName } from './Icon';
 import { Segmented } from './Segmented';
@@ -140,38 +141,28 @@ function ProfileCard({ candidate }: { candidate: Candidate }) {
 
 export function SummaryStep() {
   const { state, dispatch } = useSession();
+  const [showProfiles, setShowProfiles] = useState(false);
   const c = counts(state);
   const mine = mineCandidates(state);
   const fixes = nextFixes(state);
   const reuse = usernameReuse(state);
   const unanswered = unansweredMine(state);
-  const apiTotal = c.apiReturned + c.apiNotFound + c.apiUnable + c.apiChecking;
 
   return (
-    <div className="step enter">
-      <header className="step-header">
+    <div className="step enter summary">
+      <header className="summary-head">
         <h1 tabIndex={-1} data-step-heading>
-          Your footprint.
+          Your next steps.
         </h1>
-        <p className="lede">From API results and your own answers, this session only.</p>
+        <ul className="summary-stats" aria-label="Counts">
+          <Stat value={c.confirmed} label={c.confirmed === 1 ? 'profile confirmed' : 'profiles confirmed'} />
+          <Stat value={c.awaiting + c.unsure} label="still to review" />
+          <Stat value={Object.keys(state.done).length} label="done" />
+        </ul>
       </header>
 
-      <div className="step-header">
-        <ul className="stat-row" aria-label="Counts">
-          <Stat value={c.confirmed} label={c.confirmed === 1 ? 'profile you confirmed' : 'profiles you confirmed'} />
-          <Stat value={c.awaiting + c.unsure} label="awaiting review or unsure" />
-          <Stat value={c.selectedActions} label={c.selectedActions === 1 ? 'privacy action selected' : 'privacy actions selected'} />
-        </ul>
-        {apiTotal > 0 && (
-          <p className="api-line">
-            Automatic checks: {c.apiReturned} returned · {c.apiNotFound} not found · {c.apiUnable} unable to check
-            {c.apiChecking > 0 ? ` · ${c.apiChecking} running` : ''}
-          </p>
-        )}
-      </div>
-
       {mine.length === 0 ? (
-        <div className="empty">
+        <div className="empty summary-empty">
           <h2>Nothing confirmed yet</h2>
           <p>That doesn’t mean you have no footprint. Nothing has been marked Mine in this session yet.</p>
           <button type="button" className="btn btn-secondary" onClick={() => dispatch({ type: 'step', step: 'review' })}>
@@ -179,20 +170,22 @@ export function SummaryStep() {
           </button>
         </div>
       ) : (
-        <div className="summary-grid">
-          <section className="summary-col" aria-labelledby="fixes-h">
-            <h2 id="fixes-h">{['Next fixes', 'Your next fix', 'Your next two fixes', 'Your next three fixes'][fixes.length]}</h2>
+        <>
+          <section className="fixes" aria-labelledby="fixes-h">
+            <h2 id="fixes-h" className="visually-hidden">
+              Suggested fixes
+            </h2>
             {fixes.length === 0 ? (
-              <div className="empty">
+              <div className="empty summary-empty">
+                <h2>Nothing stands out</h2>
                 <p>
-                  Nothing stands out
                   {unanswered.length > 0
-                    ? `. Answer the checklist for ${unanswered.map((u) => platformName(u.platform)).join(', ')} for suggestions.`
-                    : ' from your answers.'}
+                    ? `Answer the quick check for ${unanswered.map((u) => platformName(u.platform)).join(', ')} to get suggestions.`
+                    : 'Based on your answers, there’s nothing to fix right now.'}
                 </p>
                 {unanswered.length > 0 && (
                   <button type="button" className="btn btn-ghost btn-sm" onClick={() => dispatch({ type: 'step', step: 'review' })}>
-                    <Icon name="arrow-left" size={15} /> Answer the checklist
+                    <Icon name="arrow-left" size={15} /> Back to review
                   </button>
                 )}
               </div>
@@ -201,12 +194,10 @@ export function SummaryStep() {
                 {fixes.map((f, i) => (
                   <li key={f.id} className={`fix${state.done[f.id] ? ' is-done' : ''}`} style={{ ['--i' as string]: i }}>
                     <h3>{f.title}</h3>
-                    <p className="fix-basis">
-                      <Icon name={f.basis === 'API-confirmed' ? 'check-circle' : 'user'} size={13} /> {f.basis}
-                    </p>
+                    <p className="fix-why">{f.why}</p>
                     <div className="card-actions">
                       {f.guide && (
-                        <ExternalLink href={f.guide.url} className="btn btn-secondary btn-sm">
+                        <ExternalLink href={f.guide.url} className="btn btn-primary btn-sm">
                           {f.guide.label}
                         </ExternalLink>
                       )}
@@ -217,6 +208,9 @@ export function SummaryStep() {
                       )}
                       <DoneToggle id={f.id} label="Mark done" />
                     </div>
+                    <p className="fix-basis">
+                      <Icon name={f.basis === 'API-confirmed' ? 'check-circle' : 'user'} size={13} /> Based on: {f.basis}
+                    </p>
                   </li>
                 ))}
               </ol>
@@ -240,19 +234,34 @@ export function SummaryStep() {
             )}
           </section>
 
-          <section className="summary-col" aria-labelledby="footprint-h">
-            <h2 id="footprint-h" className="section-title">
-              Confirmed profiles <span className="count">{mine.length}</span>
-            </h2>
-            <div className="card-grid">
-              {mine.map((cand, i) => (
-                <div key={cand.id} className="card-cell" style={{ ['--i' as string]: i }}>
-                  <ProfileCard candidate={cand} />
+          <section className="profiles-toggle-wrap" aria-label="Confirmed profiles">
+            <button
+              type="button"
+              className="btn btn-ghost profiles-toggle"
+              aria-expanded={showProfiles}
+              aria-controls="confirmed-profiles"
+              onClick={() => setShowProfiles((v) => !v)}
+            >
+              <Icon name={showProfiles ? 'eye-off' : 'eye'} size={16} />
+              {showProfiles ? 'Hide' : 'Show'} confirmed profiles ({mine.length})
+            </button>
+            {showProfiles && (
+              <div id="confirmed-profiles" className="profiles-panel">
+                <p className="small muted">
+                  <strong>API-confirmed</strong> means the platform’s public API returned it. <strong>You marked this public</strong>{' '}
+                  is your own answer. We don’t verify it.
+                </p>
+                <div className="card-grid">
+                  {mine.map((cand, i) => (
+                    <div key={cand.id} className="card-cell" style={{ ['--i' as string]: i }}>
+                      <ProfileCard candidate={cand} />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
           </section>
-        </div>
+        </>
       )}
 
       <SessionTools />

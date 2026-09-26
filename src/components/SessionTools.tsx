@@ -112,15 +112,17 @@ export function ClearButton({ className = 'btn btn-danger btn-sm', label = 'Clea
 
 export function SessionTools() {
   return (
-    <section className="session-bar" aria-labelledby="session-h">
-      <div>
-        <h2 id="session-h">Keep a copy</h2>
-        <ExportPanel />
-      </div>
-      <div className="session-clear">
-        <ClearButton className="btn btn-secondary" />
-        <p className="small muted">Closing the tab clears it too.</p>
-      </div>
+    <section className="session-row" aria-label="Session">
+      <details className="keep-copy">
+        <summary className="btn btn-ghost btn-sm">
+          <Icon name="download" size={15} /> Keep a copy
+        </summary>
+        <div className="keep-copy-panel">
+          <ExportPanel />
+        </div>
+      </details>
+      <ClearButton className="btn btn-ghost btn-sm" />
+      <p className="small muted session-note">Closing the tab clears everything too.</p>
     </section>
   );
 }
