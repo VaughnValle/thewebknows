@@ -26,7 +26,7 @@ export function StartStep() {
   const linkPreview = useMemo(() => parsed.links.slice(0, MAX_LINKS).map(parseProfileLink), [parsed.links]);
   const linkPlatforms = linkPreview.flatMap((l) => (l.ok ? [l.platform] : []));
   const lit = PLATFORM_ORDER.filter((p) => input.platforms.includes(p) || linkPlatforms.includes(p));
-  const apiSelected = lit.filter((p) => PLATFORMS[p].check === 'api');
+  const contacted = lit.filter((p) => PLATFORMS[p].check === 'api').map((p) => PLATFORMS[p].name);
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
@@ -41,145 +41,56 @@ export function StartStep() {
         <input type="checkbox" checked={checked} onChange={() => dispatch({ type: 'togglePlatform', platform: p })} />
         <Icon name={checked ? 'check' : 'plus'} size={15} />
         <span>{PLATFORMS[p].name}</span>
-        {PLATFORMS[p].check === 'api' && (
-          <span className="api-tag" title="Checked automatically with a public API">
-            API
-          </span>
-        )}
       </label>
     );
   };
 
   return (
     <div className="start enter">
-      <section className="start-hero">
-        <h1 tabIndex={-1} data-step-heading className="hero-title">
-          {HEADLINE.map((w, i) => (
-            <span key={w} className="w" style={{ ['--i' as string]: i }}>
-              {w}&nbsp;
-            </span>
-          ))}
-          <em className="w" style={{ ['--i' as string]: HEADLINE.length }}>
-            reveal.
-          </em>
-        </h1>
-        <ul className="promise" aria-label="The basics">
-          <li>
-            <Icon name="user" size={16} /> No account
-          </li>
-          <li>
-            <Icon name="lock" size={16} /> Nothing saved
-          </li>
-          <li>
-            <Icon name="leaf" size={16} /> Free
-          </li>
-        </ul>
-        <Constellation selected={lit} />
-      </section>
+      <h1 tabIndex={-1} data-step-heading className="hero-title">
+        {HEADLINE.map((w, i) => (
+          <span key={w} className="w" style={{ ['--i' as string]: i }}>
+            {w}&nbsp;
+          </span>
+        ))}
+        <em className="w" style={{ ['--i' as string]: HEADLINE.length }}>
+          reveal.
+        </em>
+      </h1>
+
+      <p className="hero-sub">Free. No account. Nothing saved.</p>
 
       <form className="start-form" onSubmit={submit} noValidate>
-        <div className="field">
-          <label htmlFor="usernames" className="field-label">
+        <div className="search-bar">
+          <label htmlFor="usernames" className="visually-hidden">
             Your usernames
           </label>
           <input
             id="usernames"
-            className="input input-xl"
+            className="search-input"
             type="text"
             autoComplete="off"
             autoCapitalize="off"
             spellCheck={false}
-            placeholder="janedoe, jane.codes"
+            placeholder="Your usernames, e.g. janedoe"
             value={input.usernamesText}
-            aria-describedby="usernames-help"
             onChange={(e) => dispatch({ type: 'input', patch: { usernamesText: e.target.value } })}
           />
-          <p className="field-help" id="usernames-help">
-            Up to {MAX_USERNAMES}, separated by commas.
-          </p>
-          {parsed.usernames.length > 0 && (
-            <ul className="chip-row" aria-label="Usernames to check">
-              {parsed.usernames.slice(0, MAX_USERNAMES).map((u) => (
-                <li key={u} className="chip">
-                  @{u}
-                </li>
-              ))}
-            </ul>
-          )}
-          {parsed.usernames.length > MAX_USERNAMES && (
-            <p className="field-note">
-              <Icon name="info" size={15} /> Only the first {MAX_USERNAMES} are used.
-            </p>
-          )}
+          <button type="submit" className="btn btn-primary search-go">
+            Check my footprint <Icon name="arrow-right" className="icon-go" />
+          </button>
         </div>
 
-        <div className="field">
-          <label htmlFor="links" className="field-label">
-            Profile links <span className="optional">optional</span>
-          </label>
-          <textarea
-            id="links"
-            className="input textarea"
-            rows={2}
-            autoComplete="off"
-            autoCapitalize="off"
-            spellCheck={false}
-            placeholder={'Paste links, one per line — best for Facebook & LinkedIn'}
-            value={input.linksText}
-            onChange={(e) => dispatch({ type: 'input', patch: { linksText: e.target.value } })}
-          />
-          {linkPreview.length > 0 && (
-            <ul className="link-preview" aria-label="Pasted links">
-              {linkPreview.map((l, i) =>
-                l.ok ? (
-                  <li key={i}>
-                    <Icon name="check" size={15} />
-                    <span>
-                      {PLATFORMS[l.platform].name} <strong>@{l.handle}</strong>
-                    </span>
-                  </li>
-                ) : (
-                  <li key={i} className="link-preview-bad">
-                    <Icon name="x" size={15} />
-                    <span>{l.reason}</span>
-                  </li>
-                ),
-              )}
-            </ul>
-          )}
-        </div>
-
-        <div className="field">
-          <label htmlFor="display-name" className="field-label">
-            Name <span className="optional">optional · a search aid, not proof of identity</span>
-          </label>
-          <input
-            id="display-name"
-            className="input"
-            type="text"
-            autoComplete="off"
-            maxLength={MAX_DISPLAY_NAME}
-            placeholder="Jane Doe"
-            value={input.displayName}
-            onChange={(e) => dispatch({ type: 'input', patch: { displayName: e.target.value } })}
-          />
-        </div>
-
-        <fieldset className="field">
-          <legend className="field-label">Platforms</legend>
-          <div className="platform-row">{PLATFORM_ORDER.map(chip)}</div>
-          <p className="field-help">API ones are checked automatically. The rest, you open and review.</p>
-        </fieldset>
-
-        <div className="field">
-          <Segmented
-            legend="Focus (optional)"
-            options={GOALS}
-            value={input.goal}
-            allowDeselect
-            onChange={(goal) => dispatch({ type: 'input', patch: { goal } })}
-          />
-        </div>
+        {parsed.usernames.length > 0 && (
+          <ul className="chip-row" aria-label="Usernames to check">
+            {parsed.usernames.slice(0, MAX_USERNAMES).map((u) => (
+              <li key={u} className="chip">
+                @{u}
+              </li>
+            ))}
+            {parsed.usernames.length > MAX_USERNAMES && <li className="field-note">first {MAX_USERNAMES} only</li>}
+          </ul>
+        )}
 
         {error && (
           <p className="form-error" role="alert">
@@ -187,31 +98,88 @@ export function StartStep() {
           </p>
         )}
 
-        <button type="submit" className="btn btn-primary btn-xl">
-          Check my footprint <Icon name="arrow-right" className="icon-go" />
-        </button>
+        <p className="hero-note">
+          {contacted.length > 0
+            ? `Only ${contacted.join(' and ')} receive${contacted.length === 1 ? 's' : ''} your usernames, to check they exist. Everything else, you open yourself.`
+            : 'Nothing is sent anywhere. You open each link yourself.'}
+        </p>
 
-        <details className="disclosure">
+        <details className="more-options">
           <summary>
-            <Icon name="shield" size={16} /> What gets sent where <Icon name="chevron" size={16} className="chev" />
+            More options <Icon name="chevron" size={16} className="chev" />
           </summary>
-          <ul>
-            {apiSelected.includes('github') && (
-              <li>
-                Usernames go from your browser to <span className="mono">api.github.com</span>.
-              </li>
-            )}
-            {apiSelected.includes('bluesky') && (
-              <li>
-                Handles go from your browser to <span className="mono">public.api.bsky.app</span>.
-              </li>
-            )}
-            {apiSelected.length > 0 && <li>Those services see your IP address, like any website.</li>}
-            <li>Other platforms aren't contacted — you open their links yourself.</li>
-            <li>No server, no analytics, no cookies. Everything stays in this tab.</li>
-          </ul>
+          <div className="more-grid">
+            <div className="field">
+              <label htmlFor="links" className="field-label">
+                Profile links
+              </label>
+              <textarea
+                id="links"
+                className="input textarea"
+                rows={2}
+                autoComplete="off"
+                autoCapitalize="off"
+                spellCheck={false}
+                placeholder="Paste links to your profiles, one per line"
+                value={input.linksText}
+                onChange={(e) => dispatch({ type: 'input', patch: { linksText: e.target.value } })}
+              />
+              {linkPreview.length > 0 && (
+                <ul className="link-preview" aria-label="Pasted links">
+                  {linkPreview.map((l, i) =>
+                    l.ok ? (
+                      <li key={i}>
+                        <Icon name="check" size={15} />
+                        <span>
+                          {PLATFORMS[l.platform].name} <strong>@{l.handle}</strong>
+                        </span>
+                      </li>
+                    ) : (
+                      <li key={i} className="link-preview-bad">
+                        <Icon name="x" size={15} />
+                        <span>{l.reason}</span>
+                      </li>
+                    ),
+                  )}
+                </ul>
+              )}
+            </div>
+
+            <div className="field">
+              <label htmlFor="display-name" className="field-label">
+                Your name <span className="optional">for search shortcuts only, not proof of identity</span>
+              </label>
+              <input
+                id="display-name"
+                className="input"
+                type="text"
+                autoComplete="off"
+                maxLength={MAX_DISPLAY_NAME}
+                placeholder="Jane Doe"
+                value={input.displayName}
+                onChange={(e) => dispatch({ type: 'input', patch: { displayName: e.target.value } })}
+              />
+            </div>
+
+            <fieldset className="field">
+              <legend className="field-label">Platforms</legend>
+              <div className="platform-row">{PLATFORM_ORDER.map(chip)}</div>
+            </fieldset>
+
+            <div className="field">
+              <Segmented
+                legend="What matters most?"
+                options={GOALS}
+                value={input.goal}
+                allowDeselect
+                onChange={(goal) => dispatch({ type: 'input', patch: { goal } })}
+              />
+            </div>
+          </div>
         </details>
       </form>
+
+      <Constellation selected={lit} />
     </div>
   );
 }

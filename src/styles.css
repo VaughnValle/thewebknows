@@ -413,22 +413,16 @@ main {
 
 .start {
   display: grid;
-  padding-top: clamp(28px, 5vw, 64px);
-  gap: clamp(32px, 5vw, 72px);
-  align-items: start;
+  justify-items: center;
+  text-align: center;
+  gap: clamp(20px, 3vw, 32px);
+  max-width: 880px;
+  margin: 0 auto;
+  padding: clamp(56px, 14vh, 160px) 0 clamp(40px, 8vh, 96px);
 }
-@media (min-width: 1000px) {
-  .start {
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  }
-  .start-hero {
-    position: sticky;
-    top: 110px;
-  }
-}
-.start-hero {
-  display: grid;
-  gap: 22px;
+.hero-title {
+  font-size: clamp(2.8rem, 8vw, 6.8rem);
+  text-wrap: balance;
 }
 .hero-title .w {
   display: inline-block;
@@ -436,35 +430,134 @@ main {
   animation-delay: calc(var(--i) * 70ms);
 }
 .hero-title em {
+  position: relative;
   font-style: normal;
-  -webkit-text-stroke: 0.028em var(--fg);
-  color: transparent;
+  color: var(--muted);
 }
-.promise {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.promise li {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 14px;
-  border: 1px solid var(--line);
+.hero-title em::after {
+  content: '';
+  position: absolute;
+  left: 0.04em;
+  right: 0.3em;
+  bottom: 0.02em;
+  height: 0.07em;
+  background: var(--fg);
   border-radius: 99px;
-  font-size: 0.88rem;
-  font-weight: 520;
+  transform-origin: left;
+  animation: underline 0.9s var(--ease) 0.75s both;
 }
-
+@keyframes underline {
+  from {
+    transform: scaleX(0);
+  }
+}
+.hero-sub {
+  font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+  color: var(--muted);
+  letter-spacing: -0.01em;
+}
+.start-form {
+  width: min(680px, 100%);
+  display: grid;
+  gap: 16px;
+  justify-items: center;
+  margin-top: clamp(12px, 3vw, 28px);
+}
+.search-bar {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  border: 1.5px solid var(--line);
+  border-radius: 99px;
+  background: var(--bg);
+  transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+.search-bar:focus-within {
+  border-color: var(--fg);
+  box-shadow: 0 20px 50px -30px rgba(0, 0, 0, 0.45);
+}
+.search-input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+  font-weight: 560;
+  letter-spacing: -0.015em;
+  padding: 0 18px;
+}
+.search-input:focus {
+  outline: none;
+}
+.search-input::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+  font-weight: 450;
+}
+.search-go {
+  min-height: 54px;
+  padding: 0 24px;
+  font-size: 1rem;
+}
+@media (max-width: 560px) {
+  .search-bar {
+    flex-direction: column;
+    border-radius: 24px;
+  }
+  .search-input {
+    padding: 14px 12px;
+  }
+  .search-go {
+    width: 100%;
+  }
+}
+.hero-note {
+  font-size: 0.86rem;
+  color: var(--muted);
+  max-width: 48ch;
+}
+.more-options {
+  width: 100%;
+  margin-top: 8px;
+}
+.more-options > summary {
+  justify-content: center;
+  font-size: 0.92rem;
+  color: var(--muted);
+  width: max-content;
+  margin: 0 auto;
+  padding: 8px 14px;
+  border-radius: 99px;
+  transition: color 0.2s, background 0.2s;
+}
+.more-options > summary:hover {
+  color: var(--fg);
+  background: var(--soft);
+}
+.more-options > summary .chev {
+  margin-left: 0;
+}
+.more-grid {
+  margin-top: 18px;
+  display: grid;
+  gap: 26px;
+  text-align: left;
+  padding: clamp(20px, 3vw, 32px);
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) + 6px);
+}
+.start .chip-row {
+  justify-content: center;
+}
 .constellation {
   width: 100%;
-  max-width: min(520px, 82vw);
+  max-width: min(460px, 80vw);
   justify-self: center;
   aspect-ratio: 1;
-  margin-top: 8px;
+  margin-top: clamp(24px, 6vh, 72px);
   overflow: visible;
 }
 .constellation .c-ring {
@@ -511,12 +604,6 @@ main {
 .constellation .c-node.is-on .c-label {
   opacity: 1;
 }
-.constellation .c-tag {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  fill: var(--muted);
-}
 .constellation .c-core {
   fill: var(--fg);
 }
@@ -536,14 +623,6 @@ main {
   animation-delay: 1.6s;
 }
 
-.start-form {
-  display: grid;
-  gap: 30px;
-  padding: clamp(20px, 3vw, 36px);
-  border: 1px solid var(--line);
-  border-radius: calc(var(--radius) + 8px);
-  background: var(--bg);
-}
 .field {
   display: grid;
   gap: 8px;
