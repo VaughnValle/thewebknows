@@ -86,7 +86,7 @@ function StepChecklist({ candidate }: { candidate: Candidate }) {
   return (
     <section className="checklist checklist-inline" aria-label="Optional yes/no questions">
       <p className="checklist-title">
-        <span>{q ? 'Quick check — optional' : 'Thanks — all answered'}</span>
+        <span>{q ? 'Quick check (optional)' : 'All answered, thanks'}</span>
         <span className="checklist-count">
           {Math.min(qi + 1, CHECKLIST.length)}/{CHECKLIST.length}
         </span>

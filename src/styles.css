@@ -429,25 +429,94 @@ main {
   animation: word 0.8s var(--ease) both;
   animation-delay: calc(var(--i) * 70ms);
 }
-.hero-title em {
+.reveal {
   position: relative;
+  display: inline-block;
   font-style: normal;
-  color: var(--muted);
+  cursor: default;
 }
-.hero-title em::after {
+.reveal-size {
+  visibility: hidden;
+}
+.reveal-chars {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: flex-start;
+  white-space: nowrap;
+}
+.reveal-chars span {
+  display: inline-block;
+  text-align: center;
+  color: var(--muted);
+  transition: color 0.3s var(--ease);
+}
+.reveal-chars span.is-set {
+  color: var(--fg);
+}
+.reveal-chars span:not(.is-set) {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.78em;
+  align-self: flex-end;
+  padding-bottom: 0.08em;
+}
+.reveal::after {
   content: '';
   position: absolute;
-  left: 0.04em;
+  left: 0.02em;
   right: 0.3em;
-  bottom: 0.02em;
-  height: 0.07em;
+  bottom: -0.02em;
+  height: 0.09em;
   background: var(--fg);
   border-radius: 99px;
-  transform-origin: left;
-  animation: underline 0.9s var(--ease) 0.75s both;
+  transform-origin: left center;
+  animation: underline-in 0.8s var(--ease) 1.6s both;
 }
-@keyframes underline {
+@keyframes underline-in {
   from {
+    transform: scaleX(0);
+  }
+}
+/* The redaction bar: covers the word, then slides off to the right. */
+.reveal-bar {
+  position: absolute;
+  left: -0.04em;
+  right: -0.04em;
+  top: 0.12em;
+  bottom: 0.02em;
+  background: var(--fg);
+  border-radius: 0.08em;
+  transform-origin: right center;
+  animation: redact-off 0.7s cubic-bezier(0.7, 0, 0.2, 1) 0.7s both;
+  pointer-events: none;
+}
+.reveal-bar.is-replay {
+  animation: redact-swipe 0.6s cubic-bezier(0.7, 0, 0.2, 1) both;
+}
+@keyframes redact-off {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+@keyframes redact-swipe {
+  0% {
+    transform-origin: left center;
+    transform: scaleX(0);
+  }
+  45% {
+    transform-origin: left center;
+    transform: scaleX(1);
+  }
+  55% {
+    transform-origin: right center;
+    transform: scaleX(1);
+  }
+  100% {
+    transform-origin: right center;
     transform: scaleX(0);
   }
 }
@@ -1718,6 +1787,14 @@ details[open] > :not(summary) {
 }
 .site-footer strong {
   color: var(--fg);
+}
+.site-footer p:last-child {
+  max-width: 62ch;
+}
+@media (min-width: 900px) {
+  .site-footer p:last-child {
+    text-align: right;
+  }
 }
 
 /* ---------- Small screens ---------- */

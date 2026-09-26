@@ -189,7 +189,7 @@ export function nextFixes(state: SessionState, limit = 3): Fix[] {
             ...base,
             id: `fix:name:${c.id}`,
             title: `Decide whether your full name should appear on ${name}`,
-            why: 'Keep it if this profile is meant to be found — for example a portfolio or work account.',
+            why: 'Keep it if this profile is meant to be found, like a portfolio or work account.',
             guide: guideFor(c.platform, 'editProfile'),
             priority: 40 + weight('name'),
           });

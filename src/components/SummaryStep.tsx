@@ -100,7 +100,7 @@ function ProfileCard({ candidate }: { candidate: Candidate }) {
                   {values.length ? values.map((v) => v.value).join(' · ') : 'Possibly in the bio'}
                 </span>
               )}
-              {r.conflict && <span className="field-values">You said no, but the API returned something — worth a look.</span>}
+              {r.conflict && <span className="field-values">You said no, but the API returned something. Worth a look.</span>}
             </div>
           );
         })}
@@ -113,7 +113,7 @@ function ProfileCard({ candidate }: { candidate: Candidate }) {
         allowDeselect
         onChange={(p) => dispatch({ type: 'plan', id: candidate.id, plan: p })}
       />
-      {plan === 'keep' && <p className="plan-note">Good call if it’s meant to be found — a portfolio or work profile.</p>}
+      {plan === 'keep' && <p className="plan-note">Good call if it’s meant to be found, like a portfolio or work profile.</p>}
       {plan === 'delete' && (
         <p className="plan-note">
           Deleting can remove things you want to keep. Download your data first, or consider deactivating. This site never
@@ -173,7 +173,7 @@ export function SummaryStep() {
       {mine.length === 0 ? (
         <div className="empty">
           <h2>Nothing confirmed yet</h2>
-          <p>That doesn’t mean you have no footprint — only that nothing’s been marked Mine in this session.</p>
+          <p>That doesn’t mean you have no footprint. Nothing has been marked Mine in this session yet.</p>
           <button type="button" className="btn btn-secondary" onClick={() => dispatch({ type: 'step', step: 'review' })}>
             <Icon name="arrow-left" /> Back to review
           </button>
@@ -232,7 +232,7 @@ export function SummaryStep() {
                     <Icon name="link" size={16} />
                     <span>
                       <strong>{g.handle}</strong> is yours on {g.platforms.map(platformName).join(' and ')}. A reused handle makes
-                      them easier to link together — fine if that’s what you want.
+                      them easier to link together. That’s fine if you want them connected.
                     </span>
                   </p>
                 ))}

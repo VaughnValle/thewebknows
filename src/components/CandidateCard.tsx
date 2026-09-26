@@ -38,8 +38,8 @@ export function cardTitle(c: Candidate): string {
 
 function basisText(c: Candidate): string {
   if (c.basis === 'pasted-link') return 'From your pasted link';
-  if (c.kind === 'search') return 'Search shortcut — results aren’t found accounts';
-  if (PLATFORMS[c.platform].ambiguous) return 'Guess — only if this is your custom URL';
+  if (c.kind === 'search') return 'Search shortcut. Results aren’t found accounts';
+  if (PLATFORMS[c.platform].ambiguous) return 'A guess. Only matches if this is your custom URL';
   return 'From your username';
 }
 
@@ -85,7 +85,7 @@ function StatusBlock({ candidate }: { candidate: Candidate }) {
     return (
       <div className="card-body">
         <p>{lookup.detail}</p>
-        <p className="card-soft">This isn’t a result either way — open it and check yourself.</p>
+        <p className="card-soft">This isn’t a result either way. Open it and check yourself.</p>
         <div>
           <button type="button" className="btn btn-ghost btn-sm" disabled={waiting} onClick={() => recheck(candidate)}>
             <Icon name="refresh" size={15} /> {waiting && retryAt ? `Retry after ${formatClock(retryAt)}` : 'Try again'}

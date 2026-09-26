@@ -172,7 +172,7 @@ describe('export', () => {
   it('produces a readable text checklist', () => {
     const text = exportAsText(s, DEFAULT_EXPORT_OPTIONS);
     expect(text).toContain('THE WEB KNOWS ME');
-    expect(text).toContain('GitHub @janedoedev — Mine');
+    expect(text).toContain('GitHub @janedoedev: Mine');
     expect(text).toContain('API-confirmed');
   });
 });

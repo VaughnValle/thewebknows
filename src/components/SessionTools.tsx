@@ -27,7 +27,7 @@ export function ExportPanel() {
 
   return (
     <div className="export-panel">
-      <p className="small">Saved to your device, never uploaded. It may contain personal info — choose what goes in:</p>
+      <p className="small">Saved to your device, never uploaded. It may contain personal info, so choose what goes in:</p>
       <div className="export-options">
         <label className="check">
           <input type="checkbox" checked={opts.includeHandles} onChange={set('includeHandles')} />
