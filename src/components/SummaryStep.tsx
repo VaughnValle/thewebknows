@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { ExternalLink } from './ExternalLink';
-import { Icon, type IconName } from './Icon';
+import { Icon } from './Icon';
 import { PlatformLogo } from './PlatformLogo';
-import { Segmented } from './Segmented';
 import { ProvenanceBadge, RetrievalBadge } from './StatusBadge';
 import { SessionTools } from './SessionTools';
 import { useCountUp } from './useCountUp';
@@ -22,13 +21,6 @@ import {
 } from '../lib/report/summary';
 import { formatDate } from '../lib/format';
 import type { Candidate } from '../lib/platforms/candidates';
-import type { ProfilePlan } from '../lib/session/state';
-
-const PLAN_OPTIONS: { value: ProfilePlan; label: string; icon: IconName }[] = [
-  { value: 'keep', label: 'Keep public', icon: 'check' },
-  { value: 'edit', label: 'Edit', icon: 'pencil' },
-  { value: 'delete', label: 'Review deletion', icon: 'trash' },
-];
 
 const GUIDE_BUTTONS: { key: GuideKey; label: string }[] = [
   { key: 'editProfile', label: 'Edit profile' },
@@ -73,9 +65,8 @@ function DoneToggle({ id, label }: { id: string; label: string }) {
 }
 
 function ProfileCard({ candidate }: { candidate: Candidate }) {
-  const { state, dispatch } = useSession();
+  const { state } = useSession();
   const rows = fieldRows(candidate, state);
-  const plan = state.plans[candidate.id];
   const guide = GUIDES[candidate.platform];
 
   return (
@@ -111,21 +102,6 @@ function ProfileCard({ candidate }: { candidate: Candidate }) {
         })}
       </dl>
 
-      <Segmented
-        legend="Your plan"
-        options={PLAN_OPTIONS}
-        value={plan}
-        allowDeselect
-        onChange={(p) => dispatch({ type: 'plan', id: candidate.id, plan: p })}
-      />
-      {plan === 'keep' && <p className="plan-note">Good call if it’s meant to be found, like a portfolio or work profile.</p>}
-      {plan === 'delete' && (
-        <p className="plan-note">
-          Deleting can remove things you want to keep. Download your data first, or consider deactivating. This site never
-          deletes anything for you.
-        </p>
-      )}
-
       <div className="guide-links">
         {GUIDE_BUTTONS.map((b) => {
           const g = guideFor(candidate.platform, b.key);
@@ -137,8 +113,10 @@ function ProfileCard({ candidate }: { candidate: Candidate }) {
           );
         })}
       </div>
-      <p className="guide-meta">Official help pages · reviewed {formatDate(guide.lastReviewed)}</p>
-      {plan && plan !== 'keep' && <DoneToggle id={`profile:${candidate.id}`} label="I’ve made my changes" />}
+      <p className="guide-meta">
+        Official help pages · reviewed {formatDate(guide.lastReviewed)}. Before deleting an account, download anything you want
+        to keep.
+      </p>
     </article>
   );
 }
@@ -280,7 +258,7 @@ export function SummaryStep() {
                         profiles <span className="profiles-cta-count">{mine.length}</span>
                       </span>
                     </span>
-                    <span className="profiles-cta-sub">See what each one shows. Keep, edit or delete.</span>
+                    <span className="profiles-cta-sub">See what each one shows and where to change it.</span>
                   </span>
                   <span className="profiles-cta-arrow" aria-hidden="true">
                     <Icon name="chevron" size={24} />
