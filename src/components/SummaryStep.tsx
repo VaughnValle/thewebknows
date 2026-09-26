@@ -156,7 +156,7 @@ export function SummaryStep() {
     <div className="step enter summary">
       <header className="summary-head">
         <h1 tabIndex={-1} data-step-heading>
-          Your next steps.
+          Take back your footprint.
         </h1>
         <ul className="summary-stats" aria-label="Counts">
           <Stat value={c.confirmed} label={c.confirmed === 1 ? 'profile confirmed' : 'profiles confirmed'} />

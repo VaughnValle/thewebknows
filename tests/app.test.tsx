@@ -77,7 +77,7 @@ describe('end-to-end flow (mocked APIs)', () => {
     expect(await screen.findByRole('button', { name: /TikTok @janedoe: Not mine/ })).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /see my summary/i }));
-    expect(await screen.findByRole('heading', { name: /your next steps/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /take back your footprint/i })).toBeInTheDocument();
     expect(screen.getByText(/profiles confirmed/).textContent).toMatch(/^2 profiles confirmed/);
     // Confirmed profiles are tucked away until asked for.
     expect(screen.queryAllByRole('article')).toHaveLength(0);
