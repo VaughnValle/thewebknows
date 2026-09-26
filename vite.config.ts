@@ -40,6 +40,16 @@ const HEADERS_FILE = `/*
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Link-preview image and app icon may be fetched by other sites and apps.
+/og-image.png
+  ! Cross-Origin-Resource-Policy
+  Cross-Origin-Resource-Policy: cross-origin
+  Cache-Control: public, max-age=86400
+
+/apple-touch-icon.png
+  ! Cross-Origin-Resource-Policy
+  Cross-Origin-Resource-Policy: cross-origin
 `;
 
 function securityPlugin(): Plugin {
