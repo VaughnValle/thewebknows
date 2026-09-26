@@ -67,7 +67,7 @@ function DoneToggle({ id, label }: { id: string; label: string }) {
       <span className="done-box" aria-hidden="true">
         {done && <Icon name="check" size={14} />}
       </span>
-      <span>{done ? 'Done (you reported)' : label}</span>
+      <span>{done ? 'Done' : label}</span>
     </label>
   );
 }
