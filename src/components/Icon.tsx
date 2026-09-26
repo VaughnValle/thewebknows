@@ -23,7 +23,9 @@ export type IconName =
   | 'user'
   | 'pencil'
   | 'lock'
-  | 'leaf';
+  | 'leaf'
+  | 'chevron'
+  | 'plus';
 
 const paths: Record<IconName, ReactElement> = {
   check: <path d="M5 12.5l4.5 4.5L19 7.5" />,
@@ -96,6 +98,8 @@ const paths: Record<IconName, ReactElement> = {
     </>
   ),
   leaf: <path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14zM5 19l7-7" />,
+  chevron: <path d="M6 9l6 6 6-6" />,
+  plus: <path d="M12 5v14M5 12h14" />,
 };
 
 export function Icon({ name, size = 18, className, ...rest }: { name: IconName; size?: number } & SVGProps<SVGSVGElement>) {

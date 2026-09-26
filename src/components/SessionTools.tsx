@@ -27,10 +27,7 @@ export function ExportPanel() {
 
   return (
     <div className="export-panel">
-      <p className="small">
-        Downloads a checklist file to your device. It's created in your browser — nothing is uploaded. The file may contain
-        personal information, so choose what goes in:
-      </p>
+      <p className="small">Saved to your device, never uploaded. It may contain personal info — choose what goes in:</p>
       <div className="export-options">
         <label className="check">
           <input type="checkbox" checked={opts.includeHandles} onChange={set('includeHandles')} />
@@ -38,18 +35,17 @@ export function ExportPanel() {
         </label>
         <label className="check">
           <input type="checkbox" checked={opts.includeApiValues} onChange={set('includeApiValues')} />
-          <span>Values the public APIs returned (name, location, email…)</span>
+          <span>Values the APIs returned (name, location…)</span>
         </label>
         <label className="check">
           <input type="checkbox" checked={opts.includeUnconfirmed} onChange={set('includeUnconfirmed')} />
-          <span>Profiles marked Not mine, Unsure, or not yet reviewed</span>
+          <span>Profiles not marked Mine</span>
         </label>
       </div>
-      <p className="small muted">Always included: counts, your answers (yes/no only), suggested fixes and what you marked done.</p>
       <div className="card-actions">
         <button
           type="button"
-          className="btn btn-secondary btn-sm"
+          className="btn btn-primary btn-sm"
           disabled={disabled}
           onClick={() => download(`thewebknows-checklist-${stamp()}.txt`, exportAsText(state, opts), 'text/plain;charset=utf-8')}
         >
@@ -94,19 +90,15 @@ export function ClearButton({ className = 'btn btn-danger btn-sm', label = 'Clea
       </button>
       <dialog ref={dialogRef} className="dialog" aria-labelledby="clear-title">
         <h2 id="clear-title">Clear this session?</h2>
-        <p>
-          This removes everything you entered, every result and every answer from this page. There's nothing stored anywhere
-          else by this site to delete.
-        </p>
+        <p>Everything you entered and every answer disappears. Nothing is stored anywhere else by this site.</p>
         <p className="small muted">
-          It can't erase your browser history, files you downloaded, or anything GitHub, Bluesky or other sites you opened may have
-          logged about those visits.
+          It can’t erase your browser history, downloaded files, or what sites you visited or checked may have logged.
         </p>
         <div className="card-actions">
           <button type="button" className="btn btn-ghost" onClick={() => dialogRef.current?.close()}>
             Cancel
           </button>
-          <button type="button" className="btn btn-danger" onClick={confirm}>
+          <button type="button" className="btn btn-danger-solid" onClick={confirm}>
             <Icon name="trash" size={16} /> Clear everything
           </button>
         </div>
@@ -120,12 +112,15 @@ export function ClearButton({ className = 'btn btn-danger btn-sm', label = 'Clea
 
 export function SessionTools() {
   return (
-    <div className="session-tools">
-      <ExportPanel />
-      <div className="session-clear">
-        <ClearButton />
-        <p className="small muted">Closing this tab also clears everything.</p>
+    <section className="session-bar" aria-labelledby="session-h">
+      <div>
+        <h2 id="session-h">Keep a copy</h2>
+        <ExportPanel />
       </div>
-    </div>
+      <div className="session-clear">
+        <ClearButton className="btn btn-secondary" />
+        <p className="small muted">Closing the tab clears it too.</p>
+      </div>
+    </section>
   );
 }

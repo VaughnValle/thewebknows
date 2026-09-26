@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 import { Header } from './components/Header';
 import { ReviewStep } from './components/ReviewStep';
 import { StartStep } from './components/StartStep';
-import { Stepper } from './components/Stepper';
 import { SummaryStep } from './components/SummaryStep';
 import { useSession } from './session/SessionContext';
 
@@ -27,8 +26,7 @@ export function App() {
       </a>
       <Header />
       <div className="page">
-        <Stepper />
-        <main id="main" tabIndex={-1}>
+        <main id="main" tabIndex={-1} key={state.step}>
           {state.step === 'start' && <StartStep />}
           {state.step === 'review' && <ReviewStep />}
           {state.step === 'summary' && <SummaryStep />}
@@ -36,12 +34,9 @@ export function App() {
       </div>
       <footer className="site-footer">
         <p>
-          <strong>The Web Knows Me</strong> · thewebknows.me — a free self-check for your own public profiles.
+          <strong>The Web Knows Me</strong> — a free self-check for your own public profiles.
         </p>
-        <p>
-          No accounts, no cookies, no analytics, no server. Your entries live only in this tab and disappear when you clear the
-          session or close it. We never change or delete anything on other sites.
-        </p>
+        <p>No accounts · no cookies · no analytics · no server. We never change anything on other sites.</p>
       </footer>
     </>
   );

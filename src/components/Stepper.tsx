@@ -2,7 +2,7 @@ import { useSession } from '../session/SessionContext';
 import type { Step } from '../lib/session/state';
 
 const STEPS: { id: Step; label: string }[] = [
-  { id: 'start', label: 'Your handles' },
+  { id: 'start', label: 'Handles' },
   { id: 'review', label: 'Review' },
   { id: 'summary', label: 'Summary' },
 ];
@@ -25,7 +25,7 @@ export function Stepper() {
                 onClick={() => dispatch({ type: 'step', step: s.id })}
               >
                 <span className="stepper-num" aria-hidden="true">
-                  {i + 1}
+                  0{i + 1}
                 </span>
                 <span>{s.label}</span>
               </button>

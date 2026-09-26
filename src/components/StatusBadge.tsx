@@ -31,9 +31,9 @@ const PROVENANCE_STYLE: Record<Provenance, { icon: IconName; tone: Tone }> = {
   'not-checked': { icon: 'dash-circle', tone: 'neutral' },
 };
 
-function Badge({ icon, label, tone, small }: { icon: IconName; label: string; tone: Tone; small?: boolean }) {
+function Badge({ icon, label, tone, small, extra }: { icon: IconName; label: string; tone: Tone; small?: boolean; extra?: string }) {
   return (
-    <span className={`badge badge-${tone}${small ? ' badge-sm' : ''}`}>
+    <span className={`badge badge-${tone}${small ? ' badge-sm' : ''}${extra ? ` ${extra}` : ''}`}>
       <Icon name={icon} size={small ? 14 : 16} />
       <span>{label}</span>
     </span>
@@ -49,5 +49,5 @@ export function IdentityBadge({ status }: { status: IdentityStatus }) {
 }
 
 export function ProvenanceBadge({ provenance }: { provenance: Provenance }) {
-  return <Badge {...PROVENANCE_STYLE[provenance]} label={PROVENANCE_LABEL[provenance]} small />;
+  return <Badge {...PROVENANCE_STYLE[provenance]} label={PROVENANCE_LABEL[provenance]} small extra={`prov-${provenance}`} />;
 }
