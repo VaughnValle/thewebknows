@@ -1,4 +1,3 @@
-import { PLATFORMS } from '../lib/platforms/directory';
 import { PLATFORM_ORDER, type PlatformId } from '../lib/types';
 
 const SHORT: Record<PlatformId, string> = {
@@ -33,12 +32,11 @@ export function Constellation({ selected }: { selected: PlatformId[] }) {
         const y = 200 + Math.sin(angle) * r;
         const len = Math.round(Math.hypot(x - 200, y - 200));
         const on = selected.includes(id);
-        const api = PLATFORMS[id].check === 'api';
         const labelBelow = y > 200;
         return (
           <g
             key={id}
-            className={`c-node${on ? ' is-on' : ''}${api ? ' is-api' : ''}`}
+            className={`c-node${on ? ' is-on' : ''}`}
             style={{ ['--i' as string]: i, ['--len' as string]: len }}
           >
             <line className="c-line" x1="200" y1="200" x2={x} y2={y} />
@@ -54,11 +52,6 @@ export function Constellation({ selected }: { selected: PlatformId[] }) {
               <text className="c-label" x={x} y={labelBelow ? y + 24 : y - 16} textAnchor="middle">
                 {SHORT[id]}
               </text>
-              {api && (
-                <text className="c-tag" x={x} y={labelBelow ? y + 36 : y - 30} textAnchor="middle">
-                  API
-                </text>
-              )}
             </g>
           </g>
         );
