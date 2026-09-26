@@ -1,0 +1,89 @@
+<!doctype html>
+<!--
+  Source for public/og-image.png (the link-preview image, 1200x630).
+  Render it at 1200x630 with any headless browser and save the result as
+  public/og-image.png. It uses the site's own Inter font from node_modules.
+-->
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face {
+    font-family: 'Inter Variable';
+    src: url('../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2');
+    font-weight: 100 900;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1200px; height: 630px; }
+  body {
+    background: #fff;
+    color: #0a0a0a;
+    font-family: 'Inter Variable', sans-serif;
+    display: grid;
+    grid-template-columns: 1fr 470px;
+    padding: 64px 40px 60px 76px;
+    overflow: hidden;
+  }
+  .left { display: flex; flex-direction: column; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 14px; font-size: 30px; font-weight: 700; letter-spacing: -0.03em; }
+  .brand span { color: #8a8a8a; }
+  h1 {
+    font-size: 92px;
+    font-weight: 780;
+    letter-spacing: -0.055em;
+    line-height: 0.95;
+  }
+  .reveal { position: relative; display: inline-block; }
+  .reveal::after {
+    content: '';
+    position: absolute;
+    left: 2px; right: 3px; bottom: -4px;
+    height: 9px;
+    background: #0a0a0a;
+    border-radius: 99px;
+  }
+  .foot { display: flex; gap: 12px; }
+  .pill { font-size: 22px; font-weight: 560; padding: 8px 18px; border: 2px solid #e7e7e7; border-radius: 99px; }
+  .pill.on { background: #10c46c; border-color: #10c46c; }
+  svg.web { width: 470px; height: 470px; align-self: center; }
+  .web text { font-family: 'Inter Variable', sans-serif; font-weight: 650; font-size: 15px; fill: #0a0a0a; }
+</style>
+</head>
+<body>
+  <div class="left">
+    <div class="brand">
+      <svg width="40" height="40" viewBox="0 0 32 32">
+        <circle cx="16" cy="16" r="13" fill="none" stroke="#0a0a0a" stroke-width="1.6" stroke-dasharray="2.4 3.4" />
+        <circle cx="16" cy="3" r="2.6" fill="#0a0a0a" />
+        <circle cx="16" cy="16" r="6" fill="#0a0a0a" />
+      </svg>
+      <b style="font-weight:inherit">thewebknows<span>.me</span></b>
+    </div>
+    <h1>Find out what your public profiles <span class="reveal">reveal</span>.</h1>
+    <div class="foot">
+      <span class="pill on">Free</span>
+      <span class="pill">No account</span>
+      <span class="pill">Nothing saved</span>
+    </div>
+  </div>
+  <svg class="web" viewBox="0 0 400 400" id="web"></svg>
+  <script>
+    const names = ['GitHub', 'Bluesky', 'Instagram', 'TikTok', 'X', 'Facebook', 'LinkedIn', 'Reddit'];
+    const radii = [150, 128, 158, 136, 152, 126, 160, 134];
+    const mine = new Set([0, 2, 6]); // a few "confirmed" nodes in green, like the review cards
+    let s = '<circle cx="200" cy="200" r="178" fill="none" stroke="#0a0a0a" stroke-opacity=".18" stroke-dasharray="2 7"/>';
+    s += '<circle cx="200" cy="200" r="96" fill="none" stroke="#0a0a0a" stroke-opacity=".08"/>';
+    names.forEach((n, i) => {
+      const a = (i / names.length) * Math.PI * 2 - Math.PI / 2 + 0.2;
+      const x = 200 + Math.cos(a) * radii[i], y = 200 + Math.sin(a) * radii[i];
+      const below = y > 200;
+      s += `<line x1="200" y1="200" x2="${x}" y2="${y}" stroke="#0a0a0a" stroke-width="1.4"/>`;
+      s += `<circle cx="${x}" cy="${y}" r="9" fill="${mine.has(i) ? '#10c46c' : '#0a0a0a'}" stroke="#0a0a0a" stroke-width="${mine.has(i) ? 2 : 0}"/>`;
+      s += `<text x="${x}" y="${below ? y + 28 : y - 18}" text-anchor="middle">${n}</text>`;
+    });
+    s += '<circle cx="200" cy="200" r="36" fill="#0a0a0a"/>';
+    s += '<text x="200" y="205.5" text-anchor="middle" style="fill:#fff;font-size:15px;font-weight:780;letter-spacing:.04em">YOU</text>';
+    document.getElementById('web').innerHTML = s;
+  </script>
+</body>
+</html>
