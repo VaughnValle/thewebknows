@@ -112,7 +112,8 @@ function ProfileCard({ candidate }: { candidate: Candidate }) {
       </dl>
 
       <Segmented
-        legend="Your plan"
+        legend="Your plan for this profile"
+        hideLegend
         options={PLAN_OPTIONS}
         value={plan}
         allowDeselect
