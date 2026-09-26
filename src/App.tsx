@@ -36,10 +36,7 @@ export function App() {
         <p>
           <strong>The Web Knows Me</strong> · A free self-check for your digital footprint.
         </p>
-        <p>
-          No accounts, personal data, cookies or analytics collected. A free static tool that only looks at data that’s already
-          public, and stores none of it.
-        </p>
+        <p>No accounts, personal data, cookies or analytics collected.</p>
       </footer>
     </>
   );
