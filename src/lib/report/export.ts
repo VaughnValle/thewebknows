@@ -27,7 +27,6 @@ const RETRIEVAL_LABEL = {
   unable: 'Unable to check',
   checking: 'Check in progress',
 } as const;
-const PLAN_LABEL = { keep: 'Keep public', edit: 'Edit', delete: 'Review deletion' } as const;
 
 export function buildExport(state: SessionState, options: ExportOptions, now = new Date()) {
   const mine = new Set(mineCandidates(state).map((c) => c.id));
@@ -52,7 +51,6 @@ export function buildExport(state: SessionState, options: ExportOptions, now = n
                   ? { apiValues: r.apiValues.map((v) => `${v.label}: ${v.value}`) }
                   : {}),
               })),
-              plan: state.plans[c.id] ? PLAN_LABEL[state.plans[c.id]] : 'Not chosen',
             }
           : {}),
       };
@@ -76,7 +74,7 @@ export function buildExport(state: SessionState, options: ExportOptions, now = n
     counts: {
       profilesYouConfirmed: c.confirmed,
       profilesAwaitingReview: c.awaiting + c.unsure,
-      selectedPrivacyActions: c.selectedActions,
+      fixesDone: c.actionsDone,
       automaticChecksUnableToRun: c.apiUnable,
     },
     usernameReuse: options.includeHandles ? usernameReuse(state) : usernameReuse(state).length,
@@ -95,7 +93,7 @@ export function exportAsText(state: SessionState, options: ExportOptions): strin
   lines.push('THE WEB KNOWS ME: your footprint checklist', `Exported ${new Date(data.exportedAt).toLocaleString()}`, '');
   lines.push(data.about, '');
   lines.push(
-    `${data.counts.profilesYouConfirmed} profiles you confirmed · ${data.counts.profilesAwaitingReview} awaiting review · ${data.counts.selectedPrivacyActions} selected privacy actions`,
+    `${data.counts.profilesYouConfirmed} profiles you confirmed · ${data.counts.profilesAwaitingReview} awaiting review · ${data.counts.fixesDone} fixes done`,
     '',
   );
   if (data.nextFixes.length) {
@@ -112,7 +110,6 @@ export function exportAsText(state: SessionState, options: ExportOptions): strin
     const name = 'handle' in p ? (p.handle ? `@${p.handle}` : `search: ${p.searchTerms}`) : p.label;
     lines.push(`- ${p.platform} ${name}: ${p.identity}`, `    ${p.retrieval}`);
     if ('link' in p) lines.push(`    ${p.link}`);
-    if ('plan' in p) lines.push(`    Plan: ${p.plan}`);
     if ('fields' in p && p.fields) {
       for (const f of p.fields) {
         lines.push(`    · ${f.field}: ${f.evidence}${'apiValues' in f && f.apiValues ? ` (${f.apiValues.join('; ')})` : ''}`);
