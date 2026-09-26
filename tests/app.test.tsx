@@ -30,7 +30,7 @@ function setup(replies: Reply[]) {
 }
 
 describe('end-to-end flow (mocked APIs)', () => {
-  it('checks, reviews, confirms, summarizes and clears', async () => {
+  it('checks, reviews one card at a time, confirms, summarizes and clears', async () => {
     const { user, f } = setup([
       { status: 200, body: { ...githubUser, login: 'janedoe' } }, // GitHub
       { status: 400, body: blueskyNotFound }, // Bluesky
@@ -38,26 +38,43 @@ describe('end-to-end flow (mocked APIs)', () => {
 
     await user.type(screen.getByLabelText('Your usernames'), 'janedoe');
     await user.click(screen.getByRole('button', { name: /check my footprint/i }));
-
     expect(await screen.findByRole('heading', { name: /which of these/i })).toBeInTheDocument();
+
+    // Only the front card is exposed; GitHub comes first.
     const gh = await screen.findByRole('article', { name: /GitHub: @janedoe/ });
     await within(gh).findByText('API-confirmed');
-    const bsky = screen.getByRole('article', { name: /Bluesky: @janedoe\.bsky\.social/ });
-    await within(bsky).findByText('Not found by API');
-    expect(within(bsky).queryByRole('radio', { name: 'Mine' })).toBeNull();
+    expect(screen.getAllByRole('article')).toHaveLength(1);
+
+    // Bluesky "not found" drops out of the deck and is listed separately.
+    expect(await screen.findByText(/Not found by API: Bluesky @janedoe\.bsky\.social/)).toBeInTheDocument();
+    expect(screen.queryByRole('article', { name: /Bluesky/ })).toBeNull();
+
+    // Mine keeps the card on screen with the optional checklist, then Next.
+    await user.click(within(gh).getByRole('button', { name: /^Mine/ }));
+    expect(within(gh).getByRole('button', { name: /^Mine/ })).toHaveAttribute('aria-pressed', 'true');
+    await user.click(within(gh).getByRole('button', { name: /^Next/ }));
 
     // Instagram is a candidate link, never "found".
-    const ig = screen.getByRole('article', { name: /Instagram: @janedoe/ });
+    const ig = await screen.findByRole('article', { name: /Instagram: @janedoe/ });
     expect(within(ig).getByText('Open to check', { selector: '.badge span' })).toBeInTheDocument();
     const igLink = within(ig).getByRole('link', { name: /open to check/i });
     expect(igLink).toHaveAttribute('href', 'https://www.instagram.com/janedoe/');
     expect(igLink).toHaveAttribute('rel', 'noopener noreferrer');
 
-    await user.click(within(gh).getByRole('radio', { name: 'Mine' }));
-    await user.click(within(ig).getByRole('radio', { name: 'Mine' }));
-    await user.click(within(ig).getByText(/optional: a few yes\/no questions/i));
+    await user.click(within(ig).getByRole('button', { name: /^Mine/ }));
+    // Questions come one at a time.
+    await user.click(within(within(ig).getByRole('group', { name: /full name/i })).getByRole('radio', { name: /^No$/ }));
+    await user.click(within(within(ig).getByRole('group', { name: /school, workplace/i })).getByRole('radio', { name: /Not sure/ }));
     const contactQ = within(ig).getByRole('group', { name: /personal email or phone/i });
-    await user.click(within(contactQ).getByRole('radio', { name: 'Yes' }));
+    await user.click(within(contactQ).getByRole('radio', { name: /Yes/ }));
+    expect(within(ig).getByRole('button', { name: /Email or phone: Yes/ })).toBeInTheDocument();
+    await user.click(within(ig).getByRole('button', { name: /^Next/ }));
+
+    // Keyboard: ← is "Not mine" and moves on.
+    const tt = await screen.findByRole('article', { name: /TikTok: @janedoe/ });
+    expect(tt).toBeInTheDocument();
+    await user.keyboard('{ArrowLeft}');
+    expect(await screen.findByRole('button', { name: /TikTok @janedoe: Not mine/ })).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /see my summary/i }));
     expect(await screen.findByRole('heading', { name: /your footprint/i })).toBeInTheDocument();
@@ -86,7 +103,21 @@ describe('end-to-end flow (mocked APIs)', () => {
     expect(within(gh).getByText(/isn.t a result either way/i)).toBeInTheDocument();
     expect(within(gh).getByRole('link', { name: /open to check/i })).toHaveAttribute('href', 'https://github.com/janedoe');
     expect(within(gh).getByRole('button', { name: /retry after/i })).toBeDisabled();
-    expect(within(gh).getByRole('radio', { name: 'Mine' })).toBeInTheDocument();
+    expect(within(gh).getByRole('button', { name: /^Mine/ })).toBeInTheDocument();
+  });
+
+  it('shows an end card when every card is reviewed', async () => {
+    const { user } = setup([]);
+    for (const p of ['github', 'bluesky', 'instagram', 'tiktok', 'x (twitter)', 'facebook', 'linkedin']) {
+      await user.click(screen.getByRole('checkbox', { name: new RegExp(`^${p.replace(/[()]/g, '\\$&')}`, 'i') }));
+    }
+    await user.type(screen.getByLabelText('Your usernames'), 'janedoe');
+    await user.click(screen.getByRole('button', { name: /check my footprint/i }));
+    const rd = await screen.findByRole('article', { name: /Reddit: @janedoe/ });
+    await user.click(within(rd).getByRole('button', { name: /^Unsure/ }));
+    expect(await screen.findByRole('heading', { name: /all reviewed/i })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /go through again/i }));
+    expect(await screen.findByRole('article', { name: /Reddit: @janedoe/ })).toBeInTheDocument();
   });
 
   it('shows a calm empty state when nothing is confirmed', async () => {
