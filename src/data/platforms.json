@@ -1,0 +1,113 @@
+{
+  "version": "2026-09-26",
+  "platforms": [
+    {
+      "id": "github",
+      "name": "GitHub",
+      "check": "api",
+      "hosts": ["github.com", "www.github.com"],
+      "handle": {
+        "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$",
+        "hint": "1–39 letters, numbers or single hyphens; can't start or end with a hyphen"
+      },
+      "profileUrl": "https://github.com/{handle}",
+      "reservedPaths": ["settings", "orgs", "organizations", "login", "join", "about", "features", "topics", "explore", "marketplace", "pricing", "search", "notifications", "sponsors", "apps", "collections", "trending", "enterprise", "security", "site", "contact", "new", "pulls", "issues", "codespaces"]
+    },
+    {
+      "id": "bluesky",
+      "name": "Bluesky",
+      "check": "api",
+      "hosts": ["bsky.app"],
+      "handle": {
+        "pattern": "^(?=.{3,253}$)(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\\.)+[A-Za-z](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$",
+        "hint": "a full handle like name.bsky.social or your own domain"
+      },
+      "profileUrl": "https://bsky.app/profile/{handle}",
+      "reservedPaths": []
+    },
+    {
+      "id": "instagram",
+      "name": "Instagram",
+      "check": "candidate",
+      "hosts": ["instagram.com", "www.instagram.com", "m.instagram.com"],
+      "handle": {
+        "pattern": "^(?!.*\\.\\.)(?!\\.)(?!.*\\.$)[A-Za-z0-9._]{1,30}$",
+        "hint": "up to 30 letters, numbers, periods or underscores"
+      },
+      "profileUrl": "https://www.instagram.com/{handle}/",
+      "reservedPaths": ["p", "reel", "reels", "explore", "accounts", "stories", "direct", "about", "legal", "developer", "tv"]
+    },
+    {
+      "id": "tiktok",
+      "name": "TikTok",
+      "check": "candidate",
+      "hosts": ["tiktok.com", "www.tiktok.com", "m.tiktok.com"],
+      "handle": {
+        "pattern": "^(?!.*\\.$)[A-Za-z0-9._]{2,24}$",
+        "hint": "2–24 letters, numbers, periods or underscores"
+      },
+      "profileUrl": "https://www.tiktok.com/@{handle}",
+      "searchUrl": "https://www.tiktok.com/search/user?q={query}",
+      "reservedPaths": []
+    },
+    {
+      "id": "x",
+      "name": "X (Twitter)",
+      "check": "candidate",
+      "hosts": ["x.com", "www.x.com", "mobile.x.com", "twitter.com", "www.twitter.com", "mobile.twitter.com"],
+      "handle": {
+        "pattern": "^[A-Za-z0-9_]{1,15}$",
+        "hint": "up to 15 letters, numbers or underscores"
+      },
+      "profileUrl": "https://x.com/{handle}",
+      "searchUrl": "https://x.com/search?q={query}&f=user",
+      "reservedPaths": ["home", "explore", "search", "settings", "i", "messages", "notifications", "compose", "login", "signup", "tos", "privacy", "intent", "share", "hashtag"]
+    },
+    {
+      "id": "facebook",
+      "name": "Facebook",
+      "check": "candidate",
+      "ambiguous": true,
+      "hosts": ["facebook.com", "www.facebook.com", "m.facebook.com"],
+      "handle": {
+        "pattern": "^[A-Za-z0-9.]{5,50}$",
+        "hint": "custom usernames are 5–50 letters, numbers or periods"
+      },
+      "profileUrl": "https://www.facebook.com/{handle}",
+      "numericProfileUrl": "https://www.facebook.com/profile.php?id={handle}",
+      "searchUrl": "https://www.facebook.com/search/people/?q={query}",
+      "reservedPaths": ["help", "settings", "privacy", "groups", "events", "marketplace", "watch", "gaming", "pages", "search", "login", "login.php", "photo", "photo.php", "story.php", "permalink.php", "sharer", "sharer.php", "share", "reel", "reels", "hashtag", "friends", "messages", "notifications", "policies", "legal", "about", "business", "ads", "careers"]
+    },
+    {
+      "id": "linkedin",
+      "name": "LinkedIn",
+      "check": "candidate",
+      "ambiguous": true,
+      "hosts": ["linkedin.com", "www.linkedin.com"],
+      "handle": {
+        "pattern": "^[A-Za-z0-9-]{3,100}$",
+        "hint": "custom profile URLs are 3–100 letters, numbers or hyphens"
+      },
+      "profileUrl": "https://www.linkedin.com/in/{handle}/",
+      "searchUrl": "https://www.linkedin.com/search/results/people/?keywords={query}",
+      "reservedPaths": []
+    },
+    {
+      "id": "reddit",
+      "name": "Reddit",
+      "check": "candidate",
+      "hosts": ["reddit.com", "www.reddit.com", "old.reddit.com", "new.reddit.com", "m.reddit.com"],
+      "handle": {
+        "pattern": "^[A-Za-z0-9_-]{3,20}$",
+        "hint": "3–20 letters, numbers, hyphens or underscores"
+      },
+      "profileUrl": "https://www.reddit.com/user/{handle}/",
+      "reservedPaths": []
+    }
+  ],
+  "webSearch": {
+    "name": "DuckDuckGo",
+    "hosts": ["duckduckgo.com"],
+    "searchUrl": "https://duckduckgo.com/?q={query}"
+  }
+}
