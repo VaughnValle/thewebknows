@@ -102,6 +102,8 @@ export interface Fix {
   title: string;
   why: string;
   platform?: PlatformId;
+  /** For fixes spanning several platforms (username reuse). */
+  platforms?: PlatformId[];
   candidateId?: string;
   guide?: GuideLink & { key: GuideKey };
   /** Evidence this fix is based on, e.g. "API-confirmed" or "You marked this public". */
@@ -204,6 +206,7 @@ export function nextFixes(state: SessionState, limit = 3): Fix[] {
       title: `Consider whether you want the same handle “${group.handle}” on ${group.platforms.map(platformName).join(' and ')}`,
       why: 'A reused handle may make these profiles easier to associate with each other.',
       basis: 'Profiles you confirmed',
+      platforms: group.platforms,
       priority: 45 + weight('linked'),
     });
   }

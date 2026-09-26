@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ExternalLink } from './ExternalLink';
 import { Icon, type IconName } from './Icon';
+import { PlatformLogo } from './PlatformLogo';
 import { Segmented } from './Segmented';
 import { ProvenanceBadge, RetrievalBadge } from './StatusBadge';
 import { SessionTools } from './SessionTools';
@@ -80,7 +81,10 @@ function ProfileCard({ candidate }: { candidate: Candidate }) {
   return (
     <article className="card profile-card" aria-labelledby={`pc-${candidate.id}`}>
       <div className="card-top">
-        <span className="card-platform">{platformName(candidate.platform)}</span>
+        <span className="card-platform card-platform-logo">
+          <PlatformLogo platform={candidate.platform} size={22} />
+          {platformName(candidate.platform)}
+        </span>
         <RetrievalBadge status={displayRetrieval(candidate, state)} />
       </div>
       <h3 id={`pc-${candidate.id}`} className="card-handle">
@@ -193,6 +197,16 @@ export function SummaryStep() {
               <ol className="fix-list">
                 {fixes.map((f, i) => (
                   <li key={f.id} className={`fix${state.done[f.id] ? ' is-done' : ''}`} style={{ ['--i' as string]: i }}>
+                    {(f.platform || f.platforms) && (
+                      <p className="fix-platforms">
+                        {(f.platforms ?? [f.platform!]).map((p) => (
+                          <span key={p} className="fix-platform">
+                            <PlatformLogo platform={p} size={18} />
+                            {platformName(p)}
+                          </span>
+                        ))}
+                      </p>
+                    )}
                     <h3>{f.title}</h3>
                     <p className="fix-why">{f.why}</p>
                     <div className="card-actions">
@@ -223,7 +237,11 @@ export function SummaryStep() {
                 </h2>
                 {reuse.map((g) => (
                   <p key={g.handle} className="reuse">
-                    <Icon name="link" size={16} />
+                    <span className="reuse-logos">
+                      {g.platforms.map((p) => (
+                        <PlatformLogo key={p} platform={p} size={18} />
+                      ))}
+                    </span>
                     <span>
                       <strong>{g.handle}</strong> is yours on {g.platforms.map(platformName).join(' and ')}. A reused handle makes
                       them easier to link together. That’s fine if you want them connected.

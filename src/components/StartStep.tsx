@@ -66,6 +66,9 @@ export function StartStep() {
           <label htmlFor="usernames" className="visually-hidden">
             Your usernames
           </label>
+          <span className="search-at" aria-hidden="true">
+            @
+          </span>
           <input
             id="usernames"
             className="search-input"
@@ -73,8 +76,9 @@ export function StartStep() {
             autoComplete="off"
             autoCapitalize="off"
             spellCheck={false}
-            placeholder="Your usernames, e.g. janedoe"
+            placeholder="janedoe, jane.codes, jdoe"
             value={input.usernamesText}
+            aria-describedby="usernames-hint"
             onChange={(e) => dispatch({ type: 'input', patch: { usernamesText: e.target.value } })}
           />
           <button type="submit" className="btn btn-primary search-go">
@@ -82,15 +86,27 @@ export function StartStep() {
           </button>
         </div>
 
-        {parsed.usernames.length > 0 && (
-          <ul className="chip-row" aria-label="Usernames to check">
-            {parsed.usernames.slice(0, MAX_USERNAMES).map((u) => (
-              <li key={u} className="chip">
-                @{u}
-              </li>
-            ))}
-            {parsed.usernames.length > MAX_USERNAMES && <li className="field-note">first {MAX_USERNAMES} only</li>}
-          </ul>
+        {parsed.usernames.length === 0 ? (
+          <p className="multi-hint" id="usernames-hint">
+            Add <strong>up to {MAX_USERNAMES} usernames</strong>, separated by commas.
+          </p>
+        ) : (
+          <div className="chip-line">
+            <ul className="chip-row" aria-label="Usernames to check">
+              {parsed.usernames.slice(0, MAX_USERNAMES).map((u) => (
+                <li key={u} className="chip">
+                  @{u}
+                </li>
+              ))}
+            </ul>
+            <span className={`chip-count${parsed.usernames.length > MAX_USERNAMES ? ' is-over' : ''}`} aria-live="polite">
+              {parsed.usernames.length > MAX_USERNAMES
+                ? `Only the first ${MAX_USERNAMES} are used`
+                : parsed.usernames.length < MAX_USERNAMES
+                  ? `${parsed.usernames.length} of ${MAX_USERNAMES}. Add more with a comma`
+                  : `${MAX_USERNAMES} of ${MAX_USERNAMES}`}
+            </span>
+          </div>
         )}
 
         {error && (

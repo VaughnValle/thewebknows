@@ -1534,7 +1534,8 @@ details[open] > :not(summary) {
 }
 .fix::before {
   content: counter(fix, decimal-leading-zero);
-  grid-row: span 4;
+  grid-row: span 6;
+  align-self: start;
   font-size: 2rem;
   font-weight: 780;
   letter-spacing: -0.05em;
@@ -2363,4 +2364,76 @@ details[open] > :not(summary) {
 .session-note {
   width: 100%;
   text-align: center;
+}
+
+/* ---------- Multi-username hint & platform logos ---------- */
+
+.search-at {
+  align-self: center;
+  padding-left: 16px;
+  font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+  font-weight: 700;
+  color: var(--muted);
+}
+.search-at + .search-input {
+  padding-left: 4px;
+}
+@media (max-width: 560px) {
+  .search-at {
+    display: none;
+  }
+  .search-at + .search-input {
+    padding-left: 12px;
+  }
+}
+.multi-hint {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.multi-hint strong {
+  color: var(--fg);
+  font-weight: 650;
+}
+.chip-line {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+.chip-count {
+  font-size: 0.84rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.chip-count.is-over {
+  color: var(--fg);
+  font-weight: 650;
+}
+
+.platform-logo {
+  flex: none;
+}
+.card-platform-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.fix-platforms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-bottom: 6px;
+}
+.fix-platform {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.reuse-logos {
+  display: inline-flex;
+  gap: 4px;
+  margin-top: 2px;
 }
