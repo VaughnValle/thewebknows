@@ -1,8 +1,8 @@
+import { Icon } from './Icon';
 import { Segmented } from './Segmented';
 import { useSession } from '../session/SessionContext';
 import { CHECKLIST } from '../lib/report/checklist';
 import { apiObservations } from '../lib/report/provenance';
-import { platformName } from '../lib/platforms/directory';
 import type { Candidate } from '../lib/platforms/candidates';
 import type { ChecklistAnswer } from '../lib/types';
 
@@ -23,11 +23,9 @@ export function Checklist({ candidate }: { candidate: Candidate }) {
     <details className="checklist" open={answered > 0 || undefined}>
       <summary>
         <span>Optional: a few yes/no questions</span>
-        <span className="checklist-count">{answered > 0 ? `${answered} of ${CHECKLIST.length} answered` : 'About a minute'}</span>
+        <span className="checklist-count">{answered > 0 ? `${answered}/${CHECKLIST.length}` : 'yes/no only'}</span>
+        <Icon name="chevron" size={16} className="chev" />
       </summary>
-      <p className="checklist-intro">
-        Answer while you look at the profile. We only record yes or no — never the details themselves.
-      </p>
       <ol className="checklist-list">
         {CHECKLIST.map((q) => {
           const hint = observed.filter((o) => q.apiCategories.includes(o.category));
@@ -43,7 +41,7 @@ export function Checklist({ candidate }: { candidate: Candidate }) {
               />
               {hint.length > 0 && (
                 <p className="checklist-hint">
-                  {platformName(candidate.platform)}'s API returned: {hint.map((h) => h.label).join(', ')}.
+                  API shows: {hint.map((h) => h.label).join(', ')}
                 </p>
               )}
             </li>

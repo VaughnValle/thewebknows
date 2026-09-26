@@ -1,10 +1,11 @@
 import { ExternalLink } from './ExternalLink';
-import { Icon } from './Icon';
+import { Icon, type IconName } from './Icon';
 import { Segmented } from './Segmented';
 import { ProvenanceBadge, RetrievalBadge } from './StatusBadge';
 import { SessionTools } from './SessionTools';
+import { useCountUp } from './useCountUp';
 import { useSession } from '../session/SessionContext';
-import { GUIDES, GUIDES_REVIEW_NOTE, platformName } from '../lib/platforms/directory';
+import { GUIDES, platformName } from '../lib/platforms/directory';
 import { isNumericFacebookId } from '../lib/platforms/handles';
 import { fieldRows } from '../lib/report/provenance';
 import {
@@ -17,11 +18,11 @@ import {
   usernameReuse,
   type GuideKey,
 } from '../lib/report/summary';
-import { formatDate, plural } from '../lib/format';
+import { formatDate } from '../lib/format';
 import type { Candidate } from '../lib/platforms/candidates';
 import type { ProfilePlan } from '../lib/session/state';
 
-const PLAN_OPTIONS: { value: ProfilePlan; label: string; icon: 'check' | 'pencil' | 'trash' }[] = [
+const PLAN_OPTIONS: { value: ProfilePlan; label: string; icon: IconName }[] = [
   { value: 'keep', label: 'Keep public', icon: 'check' },
   { value: 'edit', label: 'Edit', icon: 'pencil' },
   { value: 'delete', label: 'Review deletion', icon: 'trash' },
@@ -29,15 +30,30 @@ const PLAN_OPTIONS: { value: ProfilePlan; label: string; icon: 'check' | 'pencil
 
 const GUIDE_BUTTONS: { key: GuideKey; label: string }[] = [
   { key: 'editProfile', label: 'Edit profile' },
-  { key: 'privacy', label: 'Review privacy settings' },
-  { key: 'oldPosts', label: 'Review old posts' },
-  { key: 'deletion', label: 'Account-deletion instructions' },
+  { key: 'privacy', label: 'Privacy settings' },
+  { key: 'oldPosts', label: 'Old posts' },
+  { key: 'deletion', label: 'Deletion instructions' },
 ];
 
 function profileTitle(c: Candidate) {
-  if (c.kind === 'search') return `found via search for “${c.query}”`;
-  if (c.platform === 'facebook' && c.handle && isNumericFacebookId(c.handle)) return `profile ${c.handle}`;
+  if (c.kind === 'search') return `via “${c.query}”`;
+  if (c.platform === 'facebook' && c.handle && isNumericFacebookId(c.handle)) return `ID ${c.handle}`;
   return `@${c.handle}`;
+}
+
+function Stat({ value, label }: { value: number; label: string }) {
+  const shown = useCountUp(value);
+  return (
+    <li className="stat">
+      <span className="stat-num" aria-hidden="true">
+        {shown}
+      </span>
+      <span className="stat-label">
+        <span className="visually-hidden">{value} </span>
+        {label}
+      </span>
+    </li>
+  );
 }
 
 function DoneToggle({ id, label }: { id: string; label: string }) {
@@ -59,86 +75,65 @@ function ProfileCard({ candidate }: { candidate: Candidate }) {
   const rows = fieldRows(candidate, state);
   const plan = state.plans[candidate.id];
   const guide = GUIDES[candidate.platform];
-  const name = platformName(candidate.platform);
 
   return (
-    <article className="profile-card" aria-labelledby={`pc-${candidate.id}`}>
-      <header className="candidate-head">
-        <div>
-          <h3 id={`pc-${candidate.id}`} className="candidate-title">
-            {name} <span className="muted">{profileTitle(candidate)}</span>
-          </h3>
-        </div>
+    <article className="card profile-card" aria-labelledby={`pc-${candidate.id}`}>
+      <div className="card-top">
+        <span className="card-platform">{platformName(candidate.platform)}</span>
         <RetrievalBadge status={displayRetrieval(candidate, state)} />
-      </header>
+      </div>
+      <h3 id={`pc-${candidate.id}`} className="card-handle">
+        {profileTitle(candidate)}
+      </h3>
 
-      <table className="fields">
-        <caption className="visually-hidden">What this profile shows, and how we know</caption>
-        <thead>
-          <tr>
-            <th scope="col">Field</th>
-            <th scope="col">Evidence</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.question}>
-              <th scope="row">{r.field}</th>
-              <td>
+      <dl className="fields">
+        {rows.map((r) => {
+          const values = r.apiValues.filter((v) => !v.label.startsWith('Bio may'));
+          return (
+            <div key={r.question} className="field-row">
+              <dt>{r.field}</dt>
+              <dd>
                 <ProvenanceBadge provenance={r.provenance} />
-                {r.apiValues.length > 0 && (
-                  <span className="field-values">
-                    {r.apiValues
-                      .filter((v) => !v.label.startsWith('Bio may'))
-                      .map((v) => `${v.label}: ${v.value}`)
-                      .join(' · ') || 'Possibly in the bio text'}
-                  </span>
-                )}
-                {r.conflict && <span className="field-values">You answered no, but the API returned something — worth a look.</span>}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </dd>
+              {r.provenance === 'api' && (
+                <span className="field-values">
+                  {values.length ? values.map((v) => v.value).join(' · ') : 'Possibly in the bio'}
+                </span>
+              )}
+              {r.conflict && <span className="field-values">You said no, but the API returned something — worth a look.</span>}
+            </div>
+          );
+        })}
+      </dl>
 
       <Segmented
-        legend="What do you want to do with this profile?"
+        legend="Your plan"
         options={PLAN_OPTIONS}
         value={plan}
         allowDeselect
         onChange={(p) => dispatch({ type: 'plan', id: candidate.id, plan: p })}
       />
-      {plan === 'keep' && (
-        <p className="small muted">Fine choice — some profiles, like a portfolio or work account, are meant to be found.</p>
-      )}
+      {plan === 'keep' && <p className="plan-note">Good call if it’s meant to be found — a portfolio or work profile.</p>}
       {plan === 'delete' && (
-        <div className="notice notice-soft">
-          <Icon name="info" />
-          <p>
-            Deleting an account can also remove things you want to keep, like photos, messages or followers. Most platforms let
-            you download your data first, and some offer a temporary deactivation instead. Take your time — this site doesn't
-            delete or change anything for you.
-          </p>
-        </div>
+        <p className="plan-note">
+          Deleting can remove things you want to keep. Download your data first, or consider deactivating. This site never
+          deletes anything for you.
+        </p>
       )}
 
       <div className="guide-links">
         {GUIDE_BUTTONS.map((b) => {
           const g = guideFor(candidate.platform, b.key);
           if (!g) return null;
-          const primary = (plan === 'delete' && b.key === 'deletion') || (plan === 'edit' && b.key === 'editProfile');
           return (
-            <ExternalLink key={b.key} href={g.url} className={`btn ${primary ? 'btn-secondary' : 'btn-ghost'} btn-sm`}>
+            <ExternalLink key={b.key} href={g.url} className="text-link">
               {b.label}
             </ExternalLink>
           );
         })}
       </div>
-      <p className="guide-meta">
-        Official {name} help pages · last reviewed {formatDate(guide.lastReviewed)}
-        {guide.note ? ` · ${guide.note}` : ''}
-      </p>
-      {plan && plan !== 'keep' && <DoneToggle id={`profile:${candidate.id}`} label="I've made my changes here" />}
+      <p className="guide-meta">Official help pages · reviewed {formatDate(guide.lastReviewed)}</p>
+      {plan && plan !== 'keep' && <DoneToggle id={`profile:${candidate.id}`} label="I’ve made my changes" />}
     </article>
   );
 }
@@ -153,76 +148,61 @@ export function SummaryStep() {
   const apiTotal = c.apiReturned + c.apiNotFound + c.apiUnable + c.apiChecking;
 
   return (
-    <div className="step step-summary">
+    <div className="step enter">
       <header className="step-header">
-        <p className="eyebrow">Step 3 of 3</p>
         <h1 tabIndex={-1} data-step-heading>
-          Your footprint summary
+          Your footprint.
         </h1>
-        <p className="lede">
-          Based only on what the public APIs returned and what you told us in this session. Nothing is saved.
-        </p>
+        <p className="lede">From API results and your own answers, this session only.</p>
       </header>
 
-      <ul className="stat-row" aria-label="Counts">
-        <li className="stat">
-          <span className="stat-num">{c.confirmed}</span>
-          <span className="stat-label">{c.confirmed === 1 ? 'profile you confirmed' : 'profiles you confirmed'}</span>
-        </li>
-        <li className="stat">
-          <span className="stat-num">{c.awaiting + c.unsure}</span>
-          <span className="stat-label">{c.awaiting + c.unsure === 1 ? 'profile' : 'profiles'} awaiting review or unsure</span>
-        </li>
-        <li className="stat">
-          <span className="stat-num">{c.selectedActions}</span>
-          <span className="stat-label">{c.selectedActions === 1 ? 'selected privacy action' : 'selected privacy actions'}</span>
-        </li>
-      </ul>
-      {apiTotal > 0 && (
-        <p className="muted small api-line">
-          Automatic checks: {c.apiReturned} returned by API · {c.apiNotFound} not found · {c.apiUnable} unable to check
-          {c.apiChecking > 0 ? ` · ${c.apiChecking} still running` : ''}.
-        </p>
-      )}
+      <div className="step-header">
+        <ul className="stat-row" aria-label="Counts">
+          <Stat value={c.confirmed} label={c.confirmed === 1 ? 'profile you confirmed' : 'profiles you confirmed'} />
+          <Stat value={c.awaiting + c.unsure} label="awaiting review or unsure" />
+          <Stat value={c.selectedActions} label={c.selectedActions === 1 ? 'privacy action selected' : 'privacy actions selected'} />
+        </ul>
+        {apiTotal > 0 && (
+          <p className="api-line">
+            Automatic checks: {c.apiReturned} returned · {c.apiNotFound} not found · {c.apiUnable} unable to check
+            {c.apiChecking > 0 ? ` · ${c.apiChecking} running` : ''}
+          </p>
+        )}
+      </div>
 
       {mine.length === 0 ? (
         <div className="empty">
-          <Icon name="eye" size={28} />
-          <h2>No profiles confirmed yet</h2>
-          <p>
-            You haven't marked anything as yours in this session. That doesn't mean you have no footprint — only that nothing has
-            been confirmed here. Go back, open a few links, and mark the ones that are yours.
-          </p>
+          <h2>Nothing confirmed yet</h2>
+          <p>That doesn’t mean you have no footprint — only that nothing’s been marked Mine in this session.</p>
           <button type="button" className="btn btn-secondary" onClick={() => dispatch({ type: 'step', step: 'review' })}>
             <Icon name="arrow-left" /> Back to review
           </button>
         </div>
       ) : (
-        <>
-          <section className="summary-section" aria-labelledby="fixes-h">
-            <h2 id="fixes-h">{['Your next fixes', 'Your next fix', 'Your next two fixes', 'Your next three fixes'][fixes.length]}</h2>
+        <div className="summary-grid">
+          <section className="summary-col" aria-labelledby="fixes-h">
+            <h2 id="fixes-h">{['Next fixes', 'Your next fix', 'Your next two fixes', 'Your next three fixes'][fixes.length]}</h2>
             {fixes.length === 0 ? (
-              <div className="empty empty-inline">
+              <div className="empty">
                 <p>
-                  Nothing stands out from your answers
+                  Nothing stands out
                   {unanswered.length > 0
-                    ? `. Answer the short checklist for ${unanswered.map((u) => platformName(u.platform)).join(', ')} to get tailored suggestions.`
-                    : ' — nice.'}
+                    ? `. Answer the checklist for ${unanswered.map((u) => platformName(u.platform)).join(', ')} for suggestions.`
+                    : ' from your answers.'}
                 </p>
                 {unanswered.length > 0 && (
-                  <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: 'step', step: 'review' })}>
-                    <Icon name="arrow-left" /> Answer the checklist
+                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => dispatch({ type: 'step', step: 'review' })}>
+                    <Icon name="arrow-left" size={15} /> Answer the checklist
                   </button>
                 )}
               </div>
             ) : (
               <ol className="fix-list">
-                {fixes.map((f) => (
-                  <li key={f.id} className={`fix${state.done[f.id] ? ' is-done' : ''}`}>
+                {fixes.map((f, i) => (
+                  <li key={f.id} className={`fix${state.done[f.id] ? ' is-done' : ''}`} style={{ ['--i' as string]: i }}>
                     <h3>{f.title}</h3>
-                    <p className="small">{f.why}</p>
                     <p className="fix-basis">
-                      <Icon name={f.basis === 'API-confirmed' ? 'check-circle' : 'user'} size={14} /> Based on: {f.basis}
+                      <Icon name={f.basis === 'API-confirmed' ? 'check-circle' : 'user'} size={13} /> {f.basis}
                     </p>
                     <div className="card-actions">
                       {f.guide && (
@@ -235,55 +215,47 @@ export function SummaryStep() {
                           Go to review
                         </button>
                       )}
-                      <DoneToggle id={f.id} label="Mark as done" />
+                      <DoneToggle id={f.id} label="Mark done" />
                     </div>
                   </li>
                 ))}
               </ol>
             )}
+
+            {reuse.length > 0 && (
+              <>
+                <h2 id="reuse-h" className="visually-hidden">
+                  Username reuse
+                </h2>
+                {reuse.map((g) => (
+                  <p key={g.handle} className="reuse">
+                    <Icon name="link" size={16} />
+                    <span>
+                      <strong>{g.handle}</strong> is yours on {g.platforms.map(platformName).join(' and ')}. A reused handle makes
+                      them easier to link together — fine if that’s what you want.
+                    </span>
+                  </p>
+                ))}
+              </>
+            )}
           </section>
 
-          {reuse.length > 0 && (
-            <section className="summary-section" aria-labelledby="reuse-h">
-              <h2 id="reuse-h">Username reuse</h2>
-              {reuse.map((g) => (
-                <p key={g.handle} className="reuse">
-                  <Icon name="link" size={16} />
-                  <span>
-                    You confirmed <strong>{g.handle}</strong> on {g.platforms.map(platformName).join(' and ')}. A reused handle may
-                    make these profiles easier to associate with each other. That's fine if you want them connected.
-                  </span>
-                </p>
-              ))}
-            </section>
-          )}
-
-          <section className="summary-section" aria-labelledby="footprint-h">
-            <h2 id="footprint-h">Your confirmed footprint</h2>
-            <p className="muted small">
-              <strong>API-confirmed</strong> means the platform's public API returned it; what logged-out visitors see can
-              differ. <strong>You marked this public</strong> is your own review — we don't verify it.
-            </p>
-            <div className="profile-list">
-              {mine.map((cand) => (
-                <ProfileCard key={cand.id} candidate={cand} />
+          <section className="summary-col" aria-labelledby="footprint-h">
+            <h2 id="footprint-h" className="section-title">
+              Confirmed profiles <span className="count">{mine.length}</span>
+            </h2>
+            <div className="card-grid">
+              {mine.map((cand, i) => (
+                <div key={cand.id} className="card-cell" style={{ ['--i' as string]: i }}>
+                  <ProfileCard candidate={cand} />
+                </div>
               ))}
             </div>
-            <p className="muted small">{GUIDES_REVIEW_NOTE}</p>
           </section>
-        </>
+        </div>
       )}
 
-      <section className="summary-section" aria-labelledby="session-h">
-        <h2 id="session-h">Keep a copy, or clear it all</h2>
-        <SessionTools />
-      </section>
-
-      {(c.awaiting > 0 || c.unsure > 0) && mine.length > 0 && (
-        <p className="muted small">
-          {plural(c.awaiting + c.unsure, 'item')} still awaiting review or marked unsure — they're not included above.
-        </p>
-      )}
+      <SessionTools />
     </div>
   );
 }
