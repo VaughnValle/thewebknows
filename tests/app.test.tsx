@@ -221,16 +221,20 @@ describe('end-to-end flow (mocked APIs)', () => {
     expect(sentence).not.toHaveTextContent(/a7f3 91c2 e04b/);
 
     await user.click(screen.getByRole('button', { name: /see all \d+ details/i }));
-    // Everything is one flashcard deck: the Network card shows first.
+    // Main deck shows the Network card first.
     expect(screen.getByText('203.0.113.42')).toBeInTheDocument();
-    // Dots prove every section (data groups, photo, demos) is a card in the deck.
-    for (const label of [/^Your device$/i, /what sites can’t see/i, /check a photo before you post it/i, /your local network/i, /the autofill trap/i, /which sites you’re logged into/i]) {
+    expect(screen.getByRole('button', { name: /^Your device$/i })).toBeInTheDocument();
+    // "What sites can't see" is its own standalone, reassuring section.
+    expect(screen.getByRole('heading', { name: /what sites can’t see/i })).toBeVisible();
+    // The live demos live in their own deck below.
+    expect(screen.getByRole('heading', { name: /want to dig deeper/i })).toBeInTheDocument();
+    for (const label of [/check a photo before you post it/i, /your local network/i, /the autofill trap/i, /which sites you’re logged into/i]) {
       expect(screen.getByRole('button', { name: label })).toBeInTheDocument();
     }
     // Flip to the device card; withheld items are labelled, not hidden.
     await user.click(screen.getByRole('button', { name: /^Your device$/i }));
     expect(screen.getAllByText('Not shared by your browser').length).toBeGreaterThan(0);
-    // Flip to the social-login card: an explainer, no live probe button.
+    // Flip to the social-login card in the demos deck: an explainer.
     await user.click(screen.getByRole('button', { name: /which sites you’re logged into/i }));
     const social = await screen.findByText(/never touches your accounts/i);
     expect(social).toBeVisible();

@@ -66,6 +66,7 @@ function ReportDeck({ cards }: { cards: Card[] }) {
   const dir = useRef(1);
   const cardRef = useRef<HTMLElement | null>(null);
   const start = useRef<{ x: number; y: number; id: number } | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const first = useRef(true);
 
   const go = useCallback(
@@ -93,6 +94,16 @@ function ReportDeck({ cards }: { cards: Card[] }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey || isTypingTarget(e.target)) return;
+      // Only the deck being hovered or focused responds, so stacked decks don't both move.
+      const el = rootRef.current;
+      if (!el) return;
+      let active = el.contains(document.activeElement);
+      try {
+        active = active || el.matches(':hover');
+      } catch {
+        /* jsdom */
+      }
+      if (!active) return;
       if (e.key === 'ArrowRight') {
         e.preventDefault();
         go(index + 1);
@@ -131,7 +142,7 @@ function ReportDeck({ cards }: { cards: Card[] }) {
   };
 
   return (
-    <div className="report-deck">
+    <div className="report-deck" ref={rootRef}>
       <nav className="report-deck-dots" aria-label="Sections">
         <ol>
           {cards.map((c, n) => (
@@ -199,7 +210,7 @@ export function DeviceReport() {
   const { items, whoStatus, extrasReady } = useDevice();
   const eff = resourceUrl('https://coveryourtracks.eff.org/');
 
-  const groupCards: Card[] = GROUPS.map((g) => {
+  const dataCards: Card[] = GROUPS.map((g) => {
     const rows = items.filter((i) => i.group === g.id);
     let body: ReactNode;
     if (rows.length > 0) {
@@ -230,13 +241,26 @@ export function DeviceReport() {
     return { id: g.id, icon: GROUP_ICON[g.id], title: g.title, body };
   });
 
-  const cards: Card[] = [
-    ...groupCards,
-    {
-      id: 'cant-see',
-      icon: 'shield',
-      title: 'What sites can’t see',
-      body: (
+  const demoCards: Card[] = [
+    { id: 'photo', icon: 'image', title: 'Check a photo before you post it', tag: 'demo', body: <PhotoCheck /> },
+    { id: 'net-leak', icon: 'wifi', title: 'Your local network', tag: 'demo', body: <NetworkLeak /> },
+    { id: 'autofill', icon: 'monitor', title: 'The autofill trap', tag: 'demo', body: <AutofillDemo /> },
+    { id: 'social', icon: 'globe', title: 'Which sites you’re logged into', body: <SocialLoginNote /> },
+  ];
+
+  return (
+    <div id="device-report" className="device-report">
+      <p className="report-deck-intro">
+        <Icon name="info" size={15} /> What any website learns the moment you open it. Flip through — it’s all read on your
+        device and shown only to you.
+      </p>
+      <ReportDeck cards={dataCards} />
+
+      <section className="report-aside cant-see" aria-labelledby="cantsee-h">
+        <h2 id="cantsee-h" className="report-title">
+          <Icon name="shield" size={18} /> What sites can’t see
+        </h2>
+        <p className="report-blurb">The reassuring part: these stay private unless you choose to share them.</p>
         <ul className="cant-see-list">
           {CANT_SEE.map((c) => (
             <li key={c.title}>
@@ -244,21 +268,18 @@ export function DeviceReport() {
             </li>
           ))}
         </ul>
-      ),
-    },
-    { id: 'photo', icon: 'image', title: 'Check a photo before you post it', tag: 'demo', body: <PhotoCheck /> },
-    { id: 'net-leak', icon: 'wifi', title: 'Your local network', tag: 'demo', body: <NetworkLeak /> },
-    { id: 'autofill', icon: 'monitor', title: 'The autofill trap', tag: 'demo', body: <AutofillDemo /> },
-    { id: 'social', icon: 'globe', title: 'Which sites you’re logged into', tag: 'demo', body: <SocialLoginNote /> },
-  ];
+      </section>
 
-  return (
-    <div id="device-report" className="device-report">
-      <p className="report-deck-intro">
-        <Icon name="info" size={15} /> What any site can see, and do, the moment you open it. Flip through, everything runs on your
-        device and is shown only to you.
-      </p>
-      <ReportDeck cards={cards} />
+      <section className="demos-section" aria-labelledby="demos-h">
+        <h2 id="demos-h" className="demos-heading">
+          Want to dig deeper?
+        </h2>
+        <p className="report-deck-intro">
+          <Icon name="info" size={15} /> Live demos of what a page can do without asking, plus one risk we explain rather than run
+          against you. Everything stays on your device.
+        </p>
+        <ReportDeck cards={demoCards} />
+      </section>
     </div>
   );
 }
