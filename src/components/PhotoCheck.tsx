@@ -68,10 +68,7 @@ export function PhotoCheck() {
   const found = m ? [m.gps, m.camera, m.lens, m.takenAt, m.software].filter(Boolean).length + m.other.length : 0;
 
   return (
-    <section className="report-group photo-check" aria-labelledby="photo-h">
-      <h2 id="photo-h" className="report-title">
-        <Icon name="image" size={18} /> Check a photo before you post it
-      </h2>
+    <div className="photo-check">
       <p className="report-blurb">
         Photos can carry where and when they were taken, and on which device. Pick one to see. It stays on your device; nothing is
         uploaded.
@@ -196,6 +193,6 @@ export function PhotoCheck() {
           e.target.value = '';
         }}
       />
-    </section>
+    </div>
   );
 }

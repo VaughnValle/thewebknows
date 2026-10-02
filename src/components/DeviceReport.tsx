@@ -43,8 +43,10 @@ function Row({ item }: { item: ReportItem }) {
 }
 
 interface Card {
-  id: GroupId;
+  id: string;
+  icon: IconName;
   title: string;
+  tag?: 'demo';
   body: ReactNode;
 }
 
@@ -54,23 +56,39 @@ function isTypingTarget(el: EventTarget | null) {
 
 const SWIPE = 90;
 
-/** One data group at a time, flipped through like the review deck. */
-function GroupDeck({ cards }: { cards: Card[] }) {
-  const [i, setI] = useState(0);
-  const [dir, setDir] = useState(1);
+/**
+ * One card at a time, flipped like the review deck. All cards stay mounted
+ * (hidden when not current) so the interactive demos keep their state.
+ */
+function ReportDeck({ cards }: { cards: Card[] }) {
+  const [index, setIndex] = useState(0);
   const [drag, setDrag] = useState(0);
+  const dir = useRef(1);
+  const cardRef = useRef<HTMLElement | null>(null);
   const start = useRef<{ x: number; y: number; id: number } | null>(null);
-  const index = Math.min(i, cards.length - 1);
-  const card = cards[index];
+  const first = useRef(true);
 
   const go = useCallback(
     (to: number) => {
       const next = Math.max(0, Math.min(cards.length - 1, to));
-      setDir(next >= index ? 1 : -1);
-      setI(next);
+      dir.current = next >= index ? 1 : -1;
+      setIndex(next);
     },
     [cards.length, index],
   );
+
+  // Re-trigger the slide-in animation on the (persistent) current card.
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    const el = cardRef.current;
+    if (!el) return;
+    el.classList.remove('enter-right', 'enter-left');
+    void el.offsetWidth;
+    el.classList.add(dir.current > 0 ? 'enter-right' : 'enter-left');
+  }, [index]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -88,7 +106,7 @@ function GroupDeck({ cards }: { cards: Card[] }) {
   }, [go, index]);
 
   const onDown = (e: ReactPointerEvent) => {
-    if (e.button !== 0 || (e.target as HTMLElement).closest('a, button, summary, input, label')) return;
+    if (e.button !== 0 || (e.target as HTMLElement).closest('a, button, summary, input, label, img')) return;
     start.current = { x: e.clientX, y: e.clientY, id: e.pointerId };
   };
   const onMove = (e: ReactPointerEvent) => {
@@ -114,19 +132,17 @@ function GroupDeck({ cards }: { cards: Card[] }) {
 
   return (
     <div className="report-deck">
-      <nav className="report-deck-dots" aria-label="Categories">
+      <nav className="report-deck-dots" aria-label="Sections">
         <ol>
           {cards.map((c, n) => (
             <li key={c.id}>
               <button
                 type="button"
-                className={`report-dot${n === index ? ' is-current' : ''}`}
+                className={`report-dot${n === index ? ' is-current' : ''}${c.tag === 'demo' ? ' is-demo' : ''}`}
                 aria-label={c.title}
                 aria-current={n === index ? 'true' : undefined}
                 onClick={() => go(n)}
-              >
-                <Icon name={GROUP_ICON[c.id]} size={15} />
-              </button>
+              />
             </li>
           ))}
         </ol>
@@ -138,20 +154,29 @@ function GroupDeck({ cards }: { cards: Card[] }) {
       <div className="report-deck-stack">
         <div className="report-ghost g2" aria-hidden="true" />
         <div className="report-ghost g1" aria-hidden="true" />
-        <article
-          key={index}
-          className={`report-card enter-${dir > 0 ? 'right' : 'left'}${drag ? ' is-dragging' : ''}`}
-          style={drag ? { transform: `translateX(${drag}px) rotate(${drag / 40}deg)` } : undefined}
-          onPointerDown={onDown}
-          onPointerMove={onMove}
-          onPointerUp={onUp}
-          onPointerCancel={onUp}
-        >
-          <h2 className="report-title">
-            <Icon name={GROUP_ICON[card.id]} size={18} /> {card.title}
-          </h2>
-          {card.body}
-        </article>
+        {cards.map((c, n) => {
+          const isCurrent = n === index;
+          return (
+            <article
+              key={c.id}
+              ref={isCurrent ? cardRef : undefined}
+              className={`report-card${c.tag === 'demo' ? ' is-demo' : ''}${drag && isCurrent ? ' is-dragging' : ''}`}
+              aria-label={c.title}
+              hidden={!isCurrent}
+              style={isCurrent && drag ? { transform: `translateX(${drag}px) rotate(${drag / 40}deg)` } : undefined}
+              onPointerDown={isCurrent ? onDown : undefined}
+              onPointerMove={isCurrent ? onMove : undefined}
+              onPointerUp={isCurrent ? onUp : undefined}
+              onPointerCancel={isCurrent ? onUp : undefined}
+            >
+              <h2 className="report-title">
+                <Icon name={c.icon} size={18} /> {c.title}
+                {c.tag === 'demo' && <span className="report-demo-tag">Live demo</span>}
+              </h2>
+              {c.body}
+            </article>
+          );
+        })}
       </div>
 
       <div className="report-deck-nav">
@@ -174,7 +199,7 @@ export function DeviceReport() {
   const { items, whoStatus, extrasReady } = useDevice();
   const eff = resourceUrl('https://coveryourtracks.eff.org/');
 
-  const cards: Card[] = GROUPS.map((g) => {
+  const groupCards: Card[] = GROUPS.map((g) => {
     const rows = items.filter((i) => i.group === g.id);
     let body: ReactNode;
     if (rows.length > 0) {
@@ -202,39 +227,38 @@ export function DeviceReport() {
     } else {
       body = <p className="report-blurb">{g.id === 'fingerprint' && !extrasReady ? 'Calculating…' : g.blurb}</p>;
     }
-    return { id: g.id, title: g.title, body };
+    return { id: g.id, icon: GROUP_ICON[g.id], title: g.title, body };
   });
 
-  return (
-    <div id="device-report" className="device-report">
-      <GroupDeck cards={cards} />
-
-      <section className="report-group cant-see">
-        <h2 className="report-title">
-          <Icon name="shield" size={18} /> What sites can’t see
-        </h2>
-        <ul>
+  const cards: Card[] = [
+    ...groupCards,
+    {
+      id: 'cant-see',
+      icon: 'shield',
+      title: 'What sites can’t see',
+      body: (
+        <ul className="cant-see-list">
           {CANT_SEE.map((c) => (
             <li key={c.title}>
               <strong>{c.title}.</strong> {c.detail}
             </li>
           ))}
         </ul>
-      </section>
+      ),
+    },
+    { id: 'photo', icon: 'image', title: 'Check a photo before you post it', tag: 'demo', body: <PhotoCheck /> },
+    { id: 'net-leak', icon: 'wifi', title: 'Your local network', tag: 'demo', body: <NetworkLeak /> },
+    { id: 'autofill', icon: 'monitor', title: 'The autofill trap', tag: 'demo', body: <AutofillDemo /> },
+    { id: 'social', icon: 'globe', title: 'Which sites you’re logged into', tag: 'demo', body: <SocialLoginNote /> },
+  ];
 
-      <PhotoCheck />
-
-      <div className="report-demos">
-        <p className="demos-intro">
-          <Icon name="info" size={15} /> Live demonstrations of what a page can do without asking. Everything below runs on your
-          device and is shown only to you.
-        </p>
-        <div className="report-grid">
-          <NetworkLeak />
-          <AutofillDemo />
-          <SocialLoginNote />
-        </div>
-      </div>
+  return (
+    <div id="device-report" className="device-report">
+      <p className="report-deck-intro">
+        <Icon name="info" size={15} /> What any site can see, and do, the moment you open it. Flip through, everything runs on your
+        device and is shown only to you.
+      </p>
+      <ReportDeck cards={cards} />
     </div>
   );
 }

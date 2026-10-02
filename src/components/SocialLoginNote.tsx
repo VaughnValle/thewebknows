@@ -1,4 +1,3 @@
-import { Icon } from './Icon';
 
 /**
  * Honest explainer, not a live probe. Detecting your logged-in accounts means a
@@ -7,10 +6,7 @@ import { Icon } from './Icon';
  */
 export function SocialLoginNote() {
   return (
-    <section className="report-group demo demo-note" aria-labelledby="social-h">
-      <h2 id="social-h" className="report-title">
-        <Icon name="globe" size={18} /> Which sites you’re logged into
-      </h2>
+    <div className="demo-note">
       <p className="report-blurb">We won’t test this one on you, and here’s why it matters.</p>
       <div className="demo-prose">
         <p>
@@ -27,6 +23,6 @@ export function SocialLoginNote() {
           isolates sites from each other, such as Brave, Firefox or Safari.
         </p>
       </div>
-    </section>
+    </div>
   );
 }

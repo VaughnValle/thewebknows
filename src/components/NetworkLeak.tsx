@@ -17,10 +17,7 @@ export function NetworkLeak() {
   const masked = state.phase === 'done' && state.found.length > 0 && state.found.every((a) => a.masked);
 
   return (
-    <section className="report-group demo" aria-labelledby="net-h">
-      <h2 id="net-h" className="report-title">
-        <Icon name="wifi" size={18} /> Your local network
-      </h2>
+    <>
       <p className="report-blurb">
         Through WebRTC, a page can ask your browser for the address your device uses inside your own home or office network. No
         permission is requested. Nothing here is sent anywhere.
@@ -72,6 +69,6 @@ export function NetworkLeak() {
         </summary>
         <p>Brave and Tor Browser restrict this by default. In Firefox, set <span className="mono">media.peerConnection.enabled</span> to false. Extensions like uBlock Origin can block the WebRTC address leak.</p>
       </details>
-    </section>
+    </>
   );
 }
