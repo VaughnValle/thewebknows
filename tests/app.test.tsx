@@ -221,19 +221,19 @@ describe('end-to-end flow (mocked APIs)', () => {
     expect(sentence).not.toHaveTextContent(/a7f3 91c2 e04b/);
 
     await user.click(screen.getByRole('button', { name: /see all \d+ details/i }));
-    // Report is a flashcard deck: the Network card shows first.
+    // Everything is one flashcard deck: the Network card shows first.
     expect(screen.getByText('203.0.113.42')).toBeInTheDocument();
-    // Flip to the device card; items the browser withholds are labelled, not hidden.
+    // Dots prove every section (data groups, photo, demos) is a card in the deck.
+    for (const label of [/^Your device$/i, /what sites can’t see/i, /check a photo before you post it/i, /your local network/i, /the autofill trap/i, /which sites you’re logged into/i]) {
+      expect(screen.getByRole('button', { name: label })).toBeInTheDocument();
+    }
+    // Flip to the device card; withheld items are labelled, not hidden.
     await user.click(screen.getByRole('button', { name: /^Your device$/i }));
     expect(screen.getAllByText('Not shared by your browser').length).toBeGreaterThan(0);
-    expect(screen.getByRole('heading', { name: /what sites can’t see/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /check a photo before you post it/i })).toBeInTheDocument();
-    // Live demos and the honest social-login explainer.
-    expect(screen.getByRole('heading', { name: /your local network/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /the autofill trap/i })).toBeInTheDocument();
-    const social = screen.getByRole('heading', { name: /which sites you’re logged into/i }).closest('section')!;
-    expect(within(social).getByText(/never touches your accounts/i)).toBeInTheDocument();
-    expect(within(social).queryByRole('button')).toBeNull();
+    // Flip to the social-login card: an explainer, no live probe button.
+    await user.click(screen.getByRole('button', { name: /which sites you’re logged into/i }));
+    const social = await screen.findByText(/never touches your accounts/i);
+    expect(social).toBeVisible();
   });
 
   it('adds browser fixes to the summary', async () => {

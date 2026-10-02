@@ -29,10 +29,7 @@ export function AutofillDemo() {
   };
 
   return (
-    <section className="report-group demo" aria-labelledby="autofill-h">
-      <h2 id="autofill-h" className="report-title">
-        <Icon name="monitor" size={18} /> The autofill trap
-      </h2>
+    <>
       <p className="report-blurb">
         A form can show one harmless field while hiding others. If you let your browser autofill the visible one, it can fill the
         hidden ones too, handing over details you never saw. Try it: click the field and choose a saved profile.
@@ -92,6 +89,6 @@ export function AutofillDemo() {
         </summary>
         <p>Turn off form autofill for addresses and payment details in your browser settings, or keep it but never submit forms on sites you don’t trust. Password managers that fill only the field you click are safer than built-in profile autofill.</p>
       </details>
-    </section>
+    </>
   );
 }
