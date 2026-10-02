@@ -1,6 +1,9 @@
 import { ExternalLink } from './ExternalLink';
 import { Icon, type IconName } from './Icon';
+import { AutofillDemo } from './AutofillDemo';
+import { NetworkLeak } from './NetworkLeak';
 import { PhotoCheck } from './PhotoCheck';
+import { SocialLoginNote } from './SocialLoginNote';
 import { useDevice } from '../session/DeviceContext';
 import { ACCURACY_LABEL, CANT_SEE, GROUPS, LEARN, type GroupId, type ReportItem } from '../lib/device/report';
 import { resourceUrl } from '../lib/platforms/safeUrl';
@@ -104,6 +107,18 @@ export function DeviceReport() {
       </section>
 
       <PhotoCheck />
+
+      <div className="report-demos">
+        <p className="demos-intro">
+          <Icon name="info" size={15} /> Live demonstrations of what a page can do without asking. Everything below runs on your
+          device and is shown only to you.
+        </p>
+        <div className="report-grid">
+          <NetworkLeak />
+          <AutofillDemo />
+          <SocialLoginNote />
+        </div>
+      </div>
     </div>
   );
 }

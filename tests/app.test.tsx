@@ -223,6 +223,12 @@ describe('end-to-end flow (mocked APIs)', () => {
     expect(screen.getAllByText('Not shared by your browser').length).toBeGreaterThan(0);
     expect(screen.getByRole('heading', { name: /what sites can’t see/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /check a photo before you post it/i })).toBeInTheDocument();
+    // Live demos and the honest social-login explainer.
+    expect(screen.getByRole('heading', { name: /your local network/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /the autofill trap/i })).toBeInTheDocument();
+    const social = screen.getByRole('heading', { name: /which sites you’re logged into/i }).closest('section')!;
+    expect(within(social).getByText(/never touches your accounts/i)).toBeInTheDocument();
+    expect(within(social).queryByRole('button')).toBeNull();
   });
 
   it('adds browser fixes to the summary', async () => {
