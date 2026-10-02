@@ -16,6 +16,15 @@ npm run preview
 
 Hosted on Cloudflare Pages at https://thewebknows.me. Cloudflare builds from GitHub on every push (`npm run build` → `dist/`). The build also writes `dist/_headers` with the security headers. Setup steps are in [DEPLOY.md](DEPLOY.md).
 
+## Browser reveal (first screen)
+
+Before anyone types anything, the home page shows what every website can already see:
+
+- **From the browser** (no request leaves the page): browser, OS, languages, time zone, screen, GPU, memory, battery, connection estimates, privacy signals, and a fingerprint hashed locally. Code in `src/lib/device/`.
+- **From the connection**: IP address, ISP and approximate location come from our own Cloudflare Pages Function, `functions/api/whoami.ts`. It echoes back what Cloudflare already sees and stores nothing.
+- **Photo check**: reads EXIF location, camera and date from a JPEG, and can save a clean copy. Runs entirely in the browser (`src/lib/photo/exif.ts`).
+- The summary page adds up to three browser fixes based on what was actually detected.
+
 ## How it works
 
 | Platforms | Behavior | What the UI claims |
@@ -40,7 +49,7 @@ Every candidate gets **Mine / Not mine / Unsure** from the user. A profile marke
 ## Privacy and safety properties
 
 - State lives in React memory only. There is no localStorage, cookie, URL state, analytics or backend. **Clear** resets the state and the check service, including its cache and rate-limit memory.
-- Only GitHub and Bluesky are contacted, and only with the handles the user typed. Requests use `credentials: 'omit'` and `no-referrer`. The start page tells the user who receives what.
+- Third parties contacted: only GitHub and Bluesky, and only with the handles the user typed. The site's own `/api/whoami` function returns the visitor's connection details to them and keeps nothing. Requests use `credentials: 'omit'` and `no-referrer`. The start page tells the user who receives what.
 - Every outbound URL is rebuilt from a template, percent-encoded, and checked against a host allowlist (https only, no userinfo or port). The app never opens or fetches a pasted URL itself. It extracts the handle and rebuilds a canonical link.
 - Provider text is rendered as text, with control and bidi-override characters stripped. Remote avatars are not loaded.
 - The production build ships a CSP: `connect-src` allows only the two APIs, and there are no remote scripts, fonts or images. Fonts are self-hosted through @fontsource.

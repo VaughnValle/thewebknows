@@ -3,10 +3,11 @@ import { Header } from './components/Header';
 import { ReviewStep } from './components/ReviewStep';
 import { StartStep } from './components/StartStep';
 import { SummaryStep } from './components/SummaryStep';
+import { DeviceProvider, type DeviceLoaders } from './session/DeviceContext';
 import { useSession } from './session/SessionContext';
 
-export function App() {
-  const { state } = useSession();
+export function App({ deviceLoaders }: { deviceLoaders?: DeviceLoaders } = {}) {
+  const { state, generation } = useSession();
   const first = useRef(true);
 
   // Move focus to the new step's heading so keyboard and screen-reader users land in the right place.
@@ -20,13 +21,13 @@ export function App() {
   }, [state.step]);
 
   return (
-    <>
+    <DeviceProvider key={generation} loaders={deviceLoaders}>
       <a className="skip-link" href="#main">
         Skip to content
       </a>
       <Header />
       <div className="page">
-        <main id="main" tabIndex={-1} key={state.step}>
+        <main id="main" tabIndex={-1} key={`${state.step}-${generation}`}>
           {state.step === 'start' && <StartStep />}
           {state.step === 'review' && <ReviewStep />}
           {state.step === 'summary' && <SummaryStep />}
@@ -38,6 +39,6 @@ export function App() {
         </p>
         <p>No accounts, personal data, cookies or analytics collected.</p>
       </footer>
-    </>
+    </DeviceProvider>
   );
 }

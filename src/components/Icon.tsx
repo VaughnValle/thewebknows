@@ -12,6 +12,14 @@ export type IconName =
   | 'link'
   | 'spinner'
   | 'eye'
+  | 'pin'
+  | 'image'
+  | 'globe'
+  | 'monitor'
+  | 'chip'
+  | 'wifi'
+  | 'fingerprint'
+  | 'sliders'
   | 'sun'
   | 'moon'
   | 'eye-off'
@@ -86,6 +94,42 @@ const paths: Record<IconName, ReactElement> = {
     </>
   ),
   moon: <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />,
+  pin: (
+    <>
+      <path d="M12 21s-6.5-5.8-6.5-11a6.5 6.5 0 0 1 13 0c0 5.2-6.5 11-6.5 11z" />
+      <circle cx="12" cy="10" r="2.4" />
+    </>
+  ),
+  image: (
+    <>
+      <rect x="3.5" y="5" width="17" height="14" rx="2" />
+      <circle cx="9" cy="10" r="1.6" />
+      <path d="M20.5 16l-5-5-8 8" />
+    </>
+  ),
+  globe: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3z" />
+    </>
+  ),
+  monitor: (
+    <>
+      <rect x="3" y="4.5" width="18" height="12" rx="1.6" />
+      <path d="M8.5 20h7M12 16.5V20" />
+    </>
+  ),
+  chip: (
+    <>
+      <rect x="6.5" y="6.5" width="11" height="11" rx="1.5" />
+      <path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21" />
+    </>
+  ),
+  wifi: <path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.6 16a5 5 0 0 1 6.8 0M12 19.5h.01" />,
+  fingerprint: (
+    <path d="M7 19.5c1.3-2 2-4.3 2-7a3 3 0 0 1 6 0c0 1.2-.1 2.4-.3 3.5M12 12.5c0 3.2-.8 6-2.3 8.3M16.6 17.6c.6-1.6.9-3.3.9-5.1a5.5 5.5 0 0 0-9.6-3.6M4.6 15.5c.6-1 .9-2 .9-3a6.5 6.5 0 0 1 11-4.7M19.5 13.5c0-.3.1-.7.1-1a7.6 7.6 0 0 0-.5-2.7" />
+  ),
+  sliders: <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0M14 4v4M8 10v4M16 16v4" />,
   shield: <path d="M12 3l7 3v5.5c0 4.3-3 8-7 9.5-4-1.5-7-5.2-7-9.5V6l7-3z" />,
   download: <path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19h14" />,
   trash: <path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12" />,

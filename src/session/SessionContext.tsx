@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useReducer, useRef, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useMemo, useReducer, useRef, useState, type ReactNode } from 'react';
 import { CheckService } from '../lib/checks';
 import { generateCandidates, splitUsernamesAndLinks, type Candidate } from '../lib/platforms/candidates';
 import { initialState, reducer, type Action, type SessionState } from '../lib/session/state';
@@ -9,6 +9,8 @@ interface SessionApi {
   startRun: () => { ok: boolean; message?: string };
   recheck: (candidate: Candidate) => void;
   clear: () => void;
+  /** Increments on every clear, so anything keyed on it starts fresh. */
+  generation: number;
 }
 
 const Ctx = createContext<SessionApi | null>(null);
@@ -23,6 +25,7 @@ export function SessionProvider({ children, createService = () => new CheckServi
   createService?: () => CheckService;
 }) {
   const [state, dispatch] = useReducer(reducer, undefined, initialState);
+  const [generation, setGeneration] = useState(0);
   const serviceRef = useRef<CheckService | null>(null);
   if (!serviceRef.current) serviceRef.current = createService();
   // Bumped on clear so late responses from a previous session are dropped.
@@ -74,9 +77,13 @@ export function SessionProvider({ children, createService = () => new CheckServi
     epochRef.current++;
     serviceRef.current = createService();
     dispatch({ type: 'clear' });
+    setGeneration((g) => g + 1);
   }, [createService]);
 
-  const value = useMemo(() => ({ state, dispatch, startRun, recheck, clear }), [state, startRun, recheck, clear]);
+  const value = useMemo(
+    () => ({ state, dispatch, startRun, recheck, clear, generation }),
+    [state, startRun, recheck, clear, generation],
+  );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

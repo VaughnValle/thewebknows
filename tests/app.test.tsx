@@ -7,6 +7,55 @@ import { CheckService } from '../src/lib/checks';
 import { githubUser, rateLimitHeaders } from './fixtures/github';
 import { blueskyNotFound } from './fixtures/bluesky';
 import { deps, scriptedFetch, type Reply } from './fixtures/mockFetch';
+import type { DeviceLoaders } from '../src/session/DeviceContext';
+import type { Signals } from '../src/lib/device/collect';
+
+const fakeSignals: Signals = {
+  ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36',
+  maxTouchPoints: 0,
+  languages: ['en-US'],
+  timezone: 'Asia/Manila',
+  now: new Date('2026-10-02T04:42:00Z'),
+  screen: { width: 2560, height: 1440, colorDepth: 24 },
+  viewport: { width: 1280, height: 800 },
+  pixelRatio: 2,
+  cores: 8,
+  memoryGb: 8,
+  gpu: null,
+  pointer: 'fine',
+  battery: null,
+  connection: null,
+  media: null,
+  storageQuota: null,
+  dnt: null,
+  gpc: false,
+  cookies: true,
+  darkMode: false,
+  reducedMotion: true,
+  plugins: 5,
+  referrer: null,
+  fingerprint: { hash: 'a7f391c2e04b5d6e', traits: 12 },
+};
+
+const deviceLoaders: DeviceLoaders = {
+  basic: () => fakeSignals,
+  extras: async (s) => s,
+  whoami: async () => ({
+    ip: '203.0.113.42',
+    ipVersion: 4,
+    isp: 'PLDT Inc.',
+    asn: 9299,
+    city: 'Quezon City',
+    region: 'Metro Manila',
+    country: 'PH',
+    postalCode: null,
+    latitude: 14.68,
+    longitude: 121.04,
+    timezone: 'Asia/Manila',
+    httpProtocol: null,
+    tlsVersion: null,
+  }),
+};
 
 // jsdom lacks <dialog> methods.
 HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
@@ -23,7 +72,7 @@ function setup(replies: Reply[]) {
   const user = userEvent.setup();
   render(
     <SessionProvider createService={service}>
-      <App />
+      <App deviceLoaders={deviceLoaders} />
     </SessionProvider>,
   );
   return { user, f };
@@ -158,5 +207,34 @@ describe('end-to-end flow (mocked APIs)', () => {
     await user.click(screen.getByRole('button', { name: /switch to light mode/i }));
     expect(document.documentElement.dataset.theme).toBe('light');
     expect(setItem).not.toHaveBeenCalled();
+  });
+
+  it('shows what the browser reveals, and the full report on demand', async () => {
+    const { user } = setup([]);
+    expect(screen.getByRole('heading', { name: /the web already knows this about you/i })).toBeInTheDocument();
+    const sentence = await screen.findByText(/You’re in/);
+    await waitFor(() => expect(sentence).toHaveTextContent(/Quezon City, Philippines/));
+    expect(sentence).toHaveTextContent(/PLDT Inc/);
+    expect(sentence).toHaveTextContent(/Chrome 153/);
+    expect(sentence).toHaveTextContent(/a7f3 91c2 e04b/);
+
+    await user.click(screen.getByRole('button', { name: /see all \d+ details/i }));
+    expect(screen.getByText('203.0.113.42')).toBeInTheDocument();
+    expect(screen.getAllByText('Not shared by your browser').length).toBeGreaterThan(0);
+    expect(screen.getByRole('heading', { name: /what sites can’t see/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /check a photo before you post it/i })).toBeInTheDocument();
+  });
+
+  it('adds browser fixes to the summary', async () => {
+    const { user } = setup([]);
+    for (const p of ['github', 'bluesky', 'instagram', 'tiktok', 'x (twitter)', 'facebook', 'linkedin']) {
+      await user.click(screen.getByRole('checkbox', { name: new RegExp(`^${p.replace(/[()]/g, '\\$&')}`, 'i') }));
+    }
+    await user.type(screen.getByLabelText('Your usernames'), 'janedoe');
+    await user.click(screen.getByRole('button', { name: /check my footprint/i }));
+    await user.click(await screen.findByRole('button', { name: /see my summary/i }));
+    const section = screen.getByRole('heading', { name: /^your browser$/i }).closest('section')!;
+    expect(within(section).getByRole('heading', { name: /turn on global privacy control/i })).toBeInTheDocument();
+    expect(within(section).getByRole('link', { name: /how to turn it on/i })).toHaveAttribute('href', 'https://globalprivacycontrol.org/');
   });
 });

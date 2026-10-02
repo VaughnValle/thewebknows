@@ -1,4 +1,5 @@
 import { useMemo, useState, type FormEvent } from 'react';
+import { BrowserReveal } from './BrowserReveal';
 import { Constellation } from './Constellation';
 import { Icon } from './Icon';
 import { RevealWord } from './RevealWord';
@@ -46,9 +47,17 @@ export function StartStep() {
     );
   };
 
+  const toProfiles = () => {
+    document.getElementById('profiles')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    window.setTimeout(() => document.getElementById('usernames')?.focus({ preventScroll: true }), 450);
+  };
+
   return (
-    <div className="start enter">
-      <h1 tabIndex={-1} data-step-heading className="hero-title">
+    <>
+    <BrowserReveal onCheckProfiles={toProfiles} />
+    <div className="start enter" id="profiles">
+      <p className="kicker">And your public profiles?</p>
+      <h2 className="hero-title">
         {HEADLINE.map((w, i) => (
           <span key={w} className="w" style={{ ['--i' as string]: i }}>
             {w}&nbsp;
@@ -57,7 +66,7 @@ export function StartStep() {
         <span className="w" style={{ ['--i' as string]: HEADLINE.length }}>
           <RevealWord word="reveal." />
         </span>
-      </h1>
+      </h2>
 
       <p className="hero-sub">Free. No account. Nothing saved.</p>
 
@@ -198,5 +207,6 @@ export function StartStep() {
 
       <Constellation selected={lit} />
     </div>
+    </>
   );
 }
