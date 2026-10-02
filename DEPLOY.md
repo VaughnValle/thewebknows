@@ -27,6 +27,15 @@ Because the domain is registered with Cloudflare, its DNS is already there.
 
 Certificates can take a few minutes to issue.
 
+## The `/api/whoami` function
+
+`functions/api/whoami.ts` is a Cloudflare Pages Function. Cloudflare deploys it automatically with the site; there's nothing to configure. It echoes back to the visitor what Cloudflare already sees about their own request: IP address, network operator and approximate location. It doesn't log or store anything, and its response is marked `no-store`.
+
+To keep that promise:
+
+- Leave **Workers Logs / Observability** off for the Pages project (Settings → Functions). If you ever switch it on to debug, switch it off again afterwards.
+- Usage is covered by the free plan: one small request per visit.
+
 ## 3. Keep the privacy promises true
 
 The footer says there's no analytics and nothing is collected. Make sure Cloudflare doesn't add anything:

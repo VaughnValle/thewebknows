@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { BrowserFixes } from './BrowserFixes';
 import { ExternalLink } from './ExternalLink';
 import { Icon, type IconName } from './Icon';
 import { PlatformLogo } from './PlatformLogo';
@@ -174,7 +175,9 @@ export function SummaryStep() {
             <Icon name="arrow-left" /> Back to review
           </button>
         </div>
-      ) : (
+      ) : null}
+      {mine.length === 0 && <BrowserFixes />}
+      {mine.length === 0 ? null : (
         <>
           <section className="fixes" aria-labelledby="fixes-h">
             <h2 id="fixes-h" className="visually-hidden">
@@ -252,6 +255,8 @@ export function SummaryStep() {
               </>
             )}
           </section>
+
+          <BrowserFixes />
 
           <section className="profiles-toggle-wrap" aria-label="Confirmed profiles">
             <button

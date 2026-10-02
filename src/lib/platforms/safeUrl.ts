@@ -40,3 +40,14 @@ export function webSearchUrl(query: string): string | null {
 export function guideUrl(url: string): string | null {
   return allowlistedUrl(url, GUIDE_HOSTS);
 }
+
+/** Outside help pages linked from the browser report (privacy organisations, maps). */
+export const RESOURCE_HOSTS = ['ssd.eff.org', 'globalprivacycontrol.org', 'coveryourtracks.eff.org', 'www.openstreetmap.org', 'www.torproject.org'];
+
+export function resourceUrl(url: string): string | null {
+  return allowlistedUrl(url, RESOURCE_HOSTS);
+}
+
+export function mapUrl(lat: number, lon: number): string | null {
+  return resourceUrl(`https://www.openstreetmap.org/?mlat=${lat.toFixed(5)}&mlon=${lon.toFixed(5)}#map=14/${lat.toFixed(5)}/${lon.toFixed(5)}`);
+}
