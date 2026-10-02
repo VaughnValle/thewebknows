@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { cleanGpuName, deviceName, formatFingerprint, guessNetworkType, heroChip, parseUserAgent, utcOffset } from '../src/lib/device/parse';
 import { browserFixes, buildItems, locationLine } from '../src/lib/device/report';
-import { fetchWhoAmI, type WhoAmI } from '../src/lib/device/whoami';
+import { fetchWhoAmI, parseTrace, type WhoAmI } from '../src/lib/device/whoami';
 import { describeRequest, onRequestGet } from '../functions/api/whoami';
 import type { Signals } from '../src/lib/device/collect';
 
@@ -188,10 +188,36 @@ describe('whoami client', () => {
     const r = await fetchWhoAmI(json({ ...who, isp: 'PLDT‮ Inc.' }));
     expect(r?.isp).toBe('PLDT Inc.');
   });
-  it('returns null when unavailable (local dev, offline, errors)', async () => {
-    expect(await fetchWhoAmI(json({}, 404))).toBeNull();
-    expect(await fetchWhoAmI((async () => new Response('<html>', { headers: { 'content-type': 'text/html' } })) as unknown as typeof fetch)).toBeNull();
+  it('returns null only when both the function and trace fail', async () => {
+    const notFound = (async () => new Response('not found', { status: 404 })) as unknown as typeof fetch;
+    expect(await fetchWhoAmI(notFound)).toBeNull();
     expect(await fetchWhoAmI((async () => { throw new TypeError('offline'); }) as unknown as typeof fetch)).toBeNull();
-    expect(await fetchWhoAmI(json({ ip: null }))).toBeNull();
+  });
+
+  it('falls back to Cloudflare trace when the function is missing', async () => {
+    // Function route returns the SPA's HTML (not deployed); trace returns text.
+    const fetchImpl = (async (url: string) => {
+      if (url.includes('/api/whoami')) return new Response('<!doctype html>', { headers: { 'content-type': 'text/html' } });
+      return new Response('fl=1a\nip=203.0.113.42\nloc=PH\nhttp=http/2\ntls=TLSv1.3\n', { headers: { 'content-type': 'text/plain' } });
+    }) as unknown as typeof fetch;
+    const r = await fetchWhoAmI(fetchImpl);
+    expect(r).toMatchObject({ ip: '203.0.113.42', ipVersion: 4, country: 'PH', city: null, isp: null });
+  });
+
+  it('prefers the function when it works', async () => {
+    const fetchImpl = (async (url: string) => {
+      if (url.includes('/api/whoami')) return new Response(JSON.stringify(who), { headers: { 'content-type': 'application/json' } });
+      throw new Error('trace should not be called');
+    }) as unknown as typeof fetch;
+    expect((await fetchWhoAmI(fetchImpl))?.city).toBe('Quezon City');
+  });
+});
+
+describe('cdn-cgi/trace parsing', () => {
+  it('reads ip and country from the trace body', () => {
+    expect(parseTrace('fl=abc\nip=2001:db8::1\nloc=DE\ntls=TLSv1.3\n')).toMatchObject({ ip: '2001:db8::1', ipVersion: 6, country: 'DE', tlsVersion: 'TLSv1.3' });
+  });
+  it('returns null without an ip', () => {
+    expect(parseTrace('fl=abc\nloc=DE')).toBeNull();
   });
 });

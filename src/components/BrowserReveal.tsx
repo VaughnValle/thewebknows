@@ -20,7 +20,17 @@ export function BrowserReveal({ onCheckProfiles }: { onCheckProfiles: () => void
   const device = b ? deviceName(b) : null;
   const chip = heroChip(signals?.gpu);
   const time = signals ? signals.now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : null;
-  const place = who ? [who.city, countryName(who.country)].filter(Boolean).join(', ') || null : null;
+  const country = who ? countryName(who.country) : null;
+  const TAKES_THE = /^(United States|United Kingdom|Philippines|Netherlands|United Arab Emirates|Czech(ia| Republic)|Dominican Republic|Bahamas|Maldives|Gambia)$/;
+  const place = who
+    ? who.city
+      ? [who.city, country].filter(Boolean).join(', ')
+      : country
+        ? TAKES_THE.test(country)
+          ? `the ${country}`
+          : country
+        : null
+    : null;
   const isp = who?.isp ? who.isp.replace(/[.\s]+$/, '') : null;
   const shared = items.filter((i) => i.accuracy !== 'hidden').length;
 
