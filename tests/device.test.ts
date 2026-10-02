@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cleanGpuName, formatFingerprint, guessNetworkType, parseUserAgent, utcOffset } from '../src/lib/device/parse';
+import { cleanGpuName, deviceName, formatFingerprint, guessNetworkType, heroChip, parseUserAgent, utcOffset } from '../src/lib/device/parse';
 import { browserFixes, buildItems, locationLine } from '../src/lib/device/report';
 import { fetchWhoAmI, type WhoAmI } from '../src/lib/device/whoami';
 import { describeRequest, onRequestGet } from '../functions/api/whoami';
@@ -73,6 +73,14 @@ describe('user agent parsing', () => {
   it('spots iPads that pretend to be Macs', () => {
     expect(parseUserAgent(MAC_CHROME, { maxTouchPoints: 5 })).toMatchObject({ os: 'iPadOS', deviceType: 'Tablet' });
   });
+
+  it('names the device in plain words', () => {
+    expect(deviceName(parseUserAgent(MAC_CHROME))).toBe('a Mac');
+    expect(deviceName(parseUserAgent(IPHONE_SAFARI))).toBe('an iPhone');
+    expect(deviceName(parseUserAgent(WIN_FIREFOX))).toBe('a Windows PC');
+    expect(deviceName(parseUserAgent(ANDROID))).toBe('an Android phone');
+    expect(deviceName({ browser: null, version: null, os: null, deviceType: 'Desktop' })).toBe('a computer');
+  });
 });
 
 describe('small formatters', () => {
@@ -81,6 +89,13 @@ describe('small formatters', () => {
     expect(cleanGpuName('ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 (0x00002786) Direct3D11 vs_5_0 ps_5_0, D3D11)')).toBe('NVIDIA GeForce RTX 4070');
     expect(cleanGpuName('Apple GPU')).toBe('Apple GPU');
     expect(cleanGpuName(null)).toBeNull();
+  });
+
+  it('only shows real, short chip names in the hero', () => {
+    expect(heroChip('ANGLE (Apple, ANGLE Metal Renderer: Apple M1 Pro, Unspecified Version)')).toBe('Apple M1 Pro');
+    expect(heroChip('Vulkan 1.3.0 (SwiftShader Device (Subzero))')).toBeNull();
+    expect(heroChip('Mesa Intel(R) UHD Graphics llvmpipe')).toBeNull();
+    expect(heroChip(null)).toBeNull();
   });
 
   it('guesses network types without overclaiming', () => {
