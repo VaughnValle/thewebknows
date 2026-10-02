@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { cleanGpuName, deviceName, formatFingerprint, guessNetworkType, heroChip, parseUserAgent, utcOffset } from '../src/lib/device/parse';
 import { browserFixes, buildItems, locationLine } from '../src/lib/device/report';
 import { fetchWhoAmI, parseTrace, type WhoAmI } from '../src/lib/device/whoami';
-import { describeRequest, onRequestGet } from '../functions/api/whoami';
+import { describeRequest, whoamiResponse } from '../worker/whoami';
 import type { Signals } from '../src/lib/device/collect';
 
 const MAC_CHROME = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36';
@@ -173,8 +173,9 @@ describe('whoami function', () => {
     expect(r).toMatchObject({ ip: '2001:db8::1', ipVersion: 6, isp: 'PLDT Inc.', asn: 9299, city: 'Quezon City', latitude: 14.676 });
   });
 
-  it('never lets the response be cached', async () => {
-    const res = onRequestGet({ request: req({ 'CF-Connecting-IP': '203.0.113.42' }, {}) });
+  it('builds a JSON response that is never cached', async () => {
+    const res = whoamiResponse(req({ 'CF-Connecting-IP': '203.0.113.42' }, {}));
+    expect(res.headers.get('content-type')).toContain('json');
     expect(res.headers.get('cache-control')).toContain('no-store');
     expect(await res.json()).toMatchObject({ ip: '203.0.113.42', ipVersion: 4, city: null });
   });

@@ -27,14 +27,20 @@ Because the domain is registered with Cloudflare, its DNS is already there.
 
 Certificates can take a few minutes to issue.
 
-## The `/api/whoami` function
+## Workers + Static Assets, and the `/api/whoami` endpoint
 
-`functions/api/whoami.ts` is a Cloudflare Pages Function. Cloudflare deploys it automatically with the site; there's nothing to configure. It echoes back to the visitor what Cloudflare already sees about their own request: IP address, network operator and approximate location. It doesn't log or store anything, and its response is marked `no-store`.
+This project deploys as a **Cloudflare Worker with static assets** (not Pages). The committed `wrangler.jsonc` points at the Worker entry `worker/index.ts` and serves the built site from `dist/`:
 
-To keep that promise:
+- Static files are served straight from the asset store, with the security headers from `dist/_headers`.
+- The Worker runs only for non-asset requests. It answers `GET /api/whoami`, echoing back what Cloudflare already sees about the visitor's own request (IP, network operator, approximate location). It doesn't log or store anything, and the response is marked `no-store`. Everything else is handed to the asset store (`env.ASSETS`), which applies the single-page-app fallback.
 
-- Leave **Workers Logs / Observability** off for the Pages project (Settings → Functions). If you ever switch it on to debug, switch it off again afterwards.
-- Usage is covered by the free plan: one small request per visit.
+Build settings in the Cloudflare dashboard:
+- **Build command:** `npm run build`  → produces `dist/`
+- **Deploy command:** `npx wrangler deploy` → bundles the Worker and uploads `dist/` using `wrangler.jsonc`
+
+To keep the privacy promise, leave **Observability / Workers Logs** off for the Worker (or turn it off again after any debugging). Usage is covered by the free plan: one small request per visit.
+
+> The old Pages-style `functions/` directory is not used by this model and has been removed; the same logic now lives in `worker/whoami.ts`.
 
 ## 3. Keep the privacy promises true
 
