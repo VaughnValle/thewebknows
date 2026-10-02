@@ -221,7 +221,10 @@ describe('end-to-end flow (mocked APIs)', () => {
     expect(sentence).not.toHaveTextContent(/a7f3 91c2 e04b/);
 
     await user.click(screen.getByRole('button', { name: /see all \d+ details/i }));
+    // Report is a flashcard deck: the Network card shows first.
     expect(screen.getByText('203.0.113.42')).toBeInTheDocument();
+    // Flip to the device card; items the browser withholds are labelled, not hidden.
+    await user.click(screen.getByRole('button', { name: /^Your device$/i }));
     expect(screen.getAllByText('Not shared by your browser').length).toBeGreaterThan(0);
     expect(screen.getByRole('heading', { name: /what sites can’t see/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /check a photo before you post it/i })).toBeInTheDocument();

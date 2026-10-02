@@ -2978,6 +2978,13 @@ details[open] > :not(summary) {
   gap: 14px;
   margin-top: 4px;
 }
+.report-demos .report-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  align-items: stretch;
+}
+.report-demos .demo {
+  align-content: start;
+}
 .demos-intro {
   display: flex;
   gap: 8px;
@@ -3078,4 +3085,140 @@ details[open] > :not(summary) {
   padding: 10px 12px;
   border-radius: var(--radius-sm);
   background: var(--soft);
+}
+
+/* ---------- Device report: flashcard deck ---------- */
+
+.report-deck {
+  width: min(600px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 14px;
+}
+.report-deck-dots {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.report-deck-dots ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1;
+}
+.report-dot {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  background: var(--bg);
+  color: var(--muted);
+  cursor: pointer;
+  transition: transform 0.2s var(--ease), background 0.25s var(--ease), color 0.25s var(--ease), border-color 0.25s var(--ease);
+}
+.report-dot:hover {
+  border-color: var(--fg);
+  color: var(--fg);
+}
+.report-dot.is-current {
+  background: var(--fg);
+  border-color: var(--fg);
+  color: var(--bg);
+  transform: scale(1.08);
+}
+.report-deck-count {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.report-deck-stack {
+  position: relative;
+}
+.report-ghost {
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+  pointer-events: none;
+}
+.report-ghost.g1 {
+  transform: translateY(8px) scale(0.975);
+  opacity: 0.7;
+}
+.report-ghost.g2 {
+  transform: translateY(16px) scale(0.95);
+  opacity: 0.4;
+}
+.report-card {
+  position: relative;
+  z-index: 1;
+  background: var(--bg);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  padding: clamp(18px, 3vw, 26px);
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  box-shadow: 0 20px 44px -34px rgba(0, 0, 0, 0.5);
+  touch-action: pan-y;
+  transition: transform 0.3s var(--ease);
+}
+.report-card.enter-right {
+  animation: card-in-right 0.3s var(--ease) both;
+}
+.report-card.enter-left {
+  animation: card-in-left 0.3s var(--ease) both;
+}
+.report-card.is-dragging {
+  transition: none;
+  animation: none;
+  cursor: grabbing;
+}
+@keyframes card-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+}
+@keyframes card-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+}
+.report-card .report-rows {
+  margin-top: 2px;
+}
+/* Wider rows inside a full-width card: value gets more room, so nothing overflows. */
+.report-card .report-row > summary {
+  grid-template-columns: minmax(96px, 0.8fr) minmax(0, 1.6fr) auto 14px;
+}
+.report-deck-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.report-deck-hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.report-deck-hint .hint-touch {
+  display: none;
+}
+@media (hover: none) {
+  .report-deck-hint .hint-keys {
+    display: none;
+  }
+  .report-deck-hint .hint-touch {
+    display: inline;
+  }
 }
