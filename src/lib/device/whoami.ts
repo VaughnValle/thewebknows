@@ -1,5 +1,5 @@
 import { cleanText } from '../checks/sanitize';
-import type { WhoAmI } from '../../../functions/api/whoami';
+import type { WhoAmI } from '../../../worker/whoami';
 
 export type { WhoAmI };
 

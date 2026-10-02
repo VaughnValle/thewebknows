@@ -14,14 +14,14 @@ npm run preview
 
 ## Deploy
 
-Hosted on Cloudflare Pages at https://thewebknows.me. Cloudflare builds from GitHub on every push (`npm run build` → `dist/`). The build also writes `dist/_headers` with the security headers. Setup steps are in [DEPLOY.md](DEPLOY.md).
+Hosted on Cloudflare (Workers + Static Assets) at https://thewebknows.me. Cloudflare builds from GitHub on every push (`npm run build` → `dist/`). The build also writes `dist/_headers` with the security headers. Setup steps are in [DEPLOY.md](DEPLOY.md).
 
 ## Browser reveal (first screen)
 
 Before anyone types anything, the home page shows what every website can already see:
 
 - **From the browser** (no request leaves the page): browser, OS, languages, time zone, screen, GPU, memory, battery, connection estimates, privacy signals, and a fingerprint hashed locally. Code in `src/lib/device/`.
-- **From the connection**: IP address, ISP and approximate location come from our own Cloudflare Pages Function, `functions/api/whoami.ts`. It echoes back what Cloudflare already sees and stores nothing.
+- **From the connection**: IP address, ISP and approximate location come from our own Cloudflare Worker, `worker/index.ts` (logic in `worker/whoami.ts`), which echoes back what Cloudflare already sees and stores nothing. If it's ever unavailable, the client falls back to Cloudflare's built-in `/cdn-cgi/trace` for IP + country.
 - **Photo check**: reads EXIF location, camera and date from a JPEG, and can save a clean copy. Runs entirely in the browser (`src/lib/photo/exif.ts`).
 - The summary page adds up to three browser fixes based on what was actually detected.
 

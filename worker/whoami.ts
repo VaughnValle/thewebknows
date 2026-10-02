@@ -1,9 +1,8 @@
 /**
- * Cloudflare Pages Function: GET /api/whoami
- *
- * Echoes back what Cloudflare already knows about the visitor's own request
- * (IP address, network operator, approximate location) so the page can show it
- * to them. Nothing is logged or stored, and the response is never cached.
+ * Reads what Cloudflare already knows about the visitor's own request
+ * (IP, network operator, approximate location) so the page can show it back.
+ * Used by the Worker entry (worker/index.ts) to serve GET /api/whoami.
+ * Nothing is logged or stored, and the response is never cached.
  */
 
 /** The subset of Cloudflare's `request.cf` object we read. */
@@ -63,8 +62,9 @@ export function describeRequest(request: Request & { cf?: CfProperties }): WhoAm
   };
 }
 
-export const onRequestGet = ({ request }: { request: Request & { cf?: CfProperties } }): Response =>
-  new Response(JSON.stringify(describeRequest(request)), {
+/** Build the GET /api/whoami JSON response (no caching, no storage). */
+export function whoamiResponse(request: Request): Response {
+  return new Response(JSON.stringify(describeRequest(request as Request & { cf?: CfProperties })), {
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'Cache-Control': 'no-store, private',
@@ -73,3 +73,4 @@ export const onRequestGet = ({ request }: { request: Request & { cf?: CfProperti
       'Referrer-Policy': 'no-referrer',
     },
   });
+}
