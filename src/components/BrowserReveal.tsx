@@ -3,7 +3,7 @@ import { DeviceReport } from './DeviceReport';
 import { Icon } from './Icon';
 import { ScrambleText } from './ScrambleText';
 import { useDevice } from '../session/DeviceContext';
-import { countryName, deviceName, heroChip, parseUserAgent } from '../lib/device/parse';
+import { countryName, deviceName, formatFingerprint, heroChip, parseUserAgent } from '../lib/device/parse';
 
 function Value({ text, delay }: { text: string | null; delay: number }) {
   if (!text) return <span className="reveal-value is-pending" aria-hidden="true" />;
@@ -32,6 +32,7 @@ export function BrowserReveal({ onCheckProfiles }: { onCheckProfiles: () => void
         : null
     : null;
   const isp = who?.isp ? who.isp.replace(/[.\s]+$/, '') : null;
+  const fingerprint = signals?.fingerprint ? formatFingerprint(signals.fingerprint.hash) : null;
   const shared = items.filter((i) => i.accuracy !== 'hidden').length;
 
   return (
@@ -62,6 +63,13 @@ export function BrowserReveal({ onCheckProfiles }: { onCheckProfiles: () => void
         )}
         , using <Value text={browser} delay={1050} />, and it’s <Value text={time} delay={1250} /> where you are.
       </p>
+
+      {fingerprint && (
+        <div className="reveal-fp" aria-label="Your browser fingerprint">
+          <ScrambleText text={fingerprint} delay={1450} className="reveal-fp-code" />
+          <span className="reveal-fp-label">Your browser’s fingerprint — it recognises you even without cookies</span>
+        </div>
+      )}
 
       <p className="reveal-note">
         <Icon name="lock" size={14} /> Read from your own browser and connection. Shown only to you, never stored.
