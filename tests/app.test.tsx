@@ -215,8 +215,10 @@ describe('end-to-end flow (mocked APIs)', () => {
     const sentence = await screen.findByText(/You’re in/);
     await waitFor(() => expect(sentence).toHaveTextContent(/Quezon City, Philippines/));
     expect(sentence).toHaveTextContent(/PLDT Inc/);
+    expect(sentence).toHaveTextContent(/a Mac/);
     expect(sentence).toHaveTextContent(/Chrome 153/);
-    expect(sentence).toHaveTextContent(/a7f3 91c2 e04b/);
+    // The fingerprint hash is no longer in the hero; it lives in the full report.
+    expect(sentence).not.toHaveTextContent(/a7f3 91c2 e04b/);
 
     await user.click(screen.getByRole('button', { name: /see all \d+ details/i }));
     expect(screen.getByText('203.0.113.42')).toBeInTheDocument();

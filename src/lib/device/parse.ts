@@ -74,6 +74,36 @@ export function parseUserAgent(ua: string, opts: { brands?: Brand[]; maxTouchPoi
   return { browser, version, os, deviceType };
 }
 
+/**
+ * A short, recognisable chip name fit for the hero, or null when the renderer is a
+ * generic/software one (SwiftShader, llvmpipe…) or too long to read at a glance.
+ */
+export function heroChip(gpu: string | null | undefined): string | null {
+  const name = cleanGpuName(gpu);
+  if (!name) return null;
+  if (/swiftshader|llvmpipe|software|microsoft basic|mesa|virgl|vmware|vulkan|generic|angle/i.test(name)) return null;
+  if (name.length > 26) return null;
+  return name;
+}
+
+/**
+ * A friendly, tangible device name for the hero, e.g. "a Mac", "an iPhone".
+ * Prefers the OS, falls back to the device type.
+ */
+export function deviceName(info: BrowserInfo): string {
+  const os = info.os ?? '';
+  if (/^iOS/.test(os)) return 'an iPhone';
+  if (/iPadOS/.test(os)) return 'an iPad';
+  if (/Android/.test(os)) return info.deviceType === 'Tablet' ? 'an Android tablet' : 'an Android phone';
+  if (/^macOS|Mac OS/.test(os)) return 'a Mac';
+  if (/Windows/.test(os)) return 'a Windows PC';
+  if (/ChromeOS/.test(os)) return 'a Chromebook';
+  if (/Linux/.test(os)) return 'a Linux computer';
+  if (info.deviceType === 'Phone') return 'a phone';
+  if (info.deviceType === 'Tablet') return 'a tablet';
+  return 'a computer';
+}
+
 /** "ANGLE (Apple, ANGLE Metal Renderer: Apple M1 Pro, Unspecified Version)" → "Apple M1 Pro" */
 export function cleanGpuName(renderer: string | null | undefined): string | null {
   if (!renderer) return null;

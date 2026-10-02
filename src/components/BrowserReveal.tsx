@@ -3,7 +3,7 @@ import { DeviceReport } from './DeviceReport';
 import { Icon } from './Icon';
 import { ScrambleText } from './ScrambleText';
 import { useDevice } from '../session/DeviceContext';
-import { countryName, formatFingerprint, parseUserAgent } from '../lib/device/parse';
+import { countryName, deviceName, heroChip, parseUserAgent } from '../lib/device/parse';
 
 function Value({ text, delay }: { text: string | null; delay: number }) {
   if (!text) return <span className="reveal-value is-pending" aria-hidden="true" />;
@@ -17,10 +17,11 @@ export function BrowserReveal({ onCheckProfiles }: { onCheckProfiles: () => void
 
   const b = signals ? parseUserAgent(signals.ua, { brands: signals.brands, maxTouchPoints: signals.maxTouchPoints, platformVersion: signals.platformVersion }) : null;
   const browser = b?.browser ? [b.browser, b.version].filter(Boolean).join(' ') : null;
+  const device = b ? deviceName(b) : null;
+  const chip = heroChip(signals?.gpu);
   const time = signals ? signals.now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : null;
   const place = who ? [who.city, countryName(who.country)].filter(Boolean).join(', ') || null : null;
   const isp = who?.isp ? who.isp.replace(/[.\s]+$/, '') : null;
-  const fp = signals?.fingerprint ? formatFingerprint(signals.fingerprint.hash) : null;
   const shared = items.filter((i) => i.accuracy !== 'hidden').length;
 
   return (
@@ -42,20 +43,14 @@ export function BrowserReveal({ onCheckProfiles }: { onCheckProfiles: () => void
             .{' '}
           </>
         )}
-        You’re using <Value text={browser} delay={700} />
-        {b?.os && (
+        You’re on <Value text={device} delay={700} />
+        {chip && (
           <>
             {' '}
-            on <Value text={b.os} delay={900} />
+            (<Value text={chip} delay={900} />)
           </>
         )}
-        , and it’s <Value text={time} delay={1100} /> where you are.
-        {(fp || !signals) && (
-          <>
-            {' '}
-            Your browser’s fingerprint is <Value text={fp} delay={1300} />.
-          </>
-        )}
+        , using <Value text={browser} delay={1050} />, and it’s <Value text={time} delay={1250} /> where you are.
       </p>
 
       <p className="reveal-note">
