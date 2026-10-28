@@ -224,7 +224,7 @@ export function DeviceReport() {
           </div>
           {g.id === 'fingerprint' && eff && (
             <ExternalLink href={eff} className="text-link">
-              How unique is it? Test at EFF’s Cover Your Tracks
+              How unique is it? Test it at EFF
             </ExternalLink>
           )}
         </>
@@ -232,7 +232,7 @@ export function DeviceReport() {
     } else if (g.id === 'network') {
       body = (
         <p className="report-blurb">
-          {whoStatus === 'loading' ? 'Looking up your connection…' : 'We couldn’t look up your connection right now. Sites you visit still can.'}
+          {whoStatus === 'loading' ? 'Looking up your connection…' : 'Couldn’t look up your connection right now. Other sites still can.'}
         </p>
       );
     } else {
@@ -251,8 +251,7 @@ export function DeviceReport() {
   return (
     <div id="device-report" className="device-report">
       <p className="report-deck-intro">
-        <Icon name="info" size={15} /> What any website learns the moment you open it. Flip through — it’s all read on your
-        device and shown only to you.
+        <Icon name="info" size={15} /> What any website learns the moment you open it. All read on your device.
       </p>
       <ReportDeck cards={dataCards} />
 
@@ -260,7 +259,7 @@ export function DeviceReport() {
         <h2 id="cantsee-h" className="report-title">
           <Icon name="shield" size={18} /> What sites can’t see
         </h2>
-        <p className="report-blurb">The reassuring part: these stay private unless you choose to share them.</p>
+        <p className="report-blurb">These stay private unless you share them.</p>
         <ul className="cant-see-list">
           {CANT_SEE.map((c) => (
             <li key={c.title}>
@@ -272,11 +271,10 @@ export function DeviceReport() {
 
       <section className="demos-section" aria-labelledby="demos-h">
         <h2 id="demos-h" className="demos-heading">
-          Want to dig deeper?
+          Try it yourself.
         </h2>
         <p className="report-deck-intro">
-          <Icon name="info" size={15} /> Live demos of what a page can do without asking, plus one risk we explain rather than run
-          against you. Everything stays on your device.
+          <Icon name="info" size={15} /> Live demos of what a page can do without asking. Everything stays on your device.
         </p>
         <ReportDeck cards={demoCards} />
       </section>

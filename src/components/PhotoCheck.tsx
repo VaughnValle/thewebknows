@@ -70,8 +70,7 @@ export function PhotoCheck() {
   return (
     <div className="photo-check">
       <p className="report-blurb">
-        Photos can carry where and when they were taken, and on which device. Pick one to see. It stays on your device; nothing is
-        uploaded.
+        Photos carry where, when and on what they were taken. Pick one to see. Nothing is uploaded.
       </p>
 
       {!checked ? (
@@ -94,7 +93,7 @@ export function PhotoCheck() {
           <img src={checked.preview} alt="" className="photo-thumb" />
           <div className="photo-facts">
             {!m!.isJpeg ? (
-              <p>We can read hidden details from JPEG photos, the format most phones and cameras share. This file type isn’t supported yet.</p>
+              <p>Only JPEG photos can be read here, the format most phones and cameras use.</p>
             ) : found === 0 ? (
               <p className="photo-clean">
                 <Icon name="check-circle" size={18} /> No hidden location, camera or date found in this photo.
@@ -159,7 +158,7 @@ export function PhotoCheck() {
                   )}
                 </dl>
                 <p className="small muted">
-                  Many big platforms remove this when you post, but messaging apps, email, forums and file sharing often keep it.
+                  Big platforms strip this when you post. Messaging apps, email, forums and file sharing often keep it.
                 </p>
               </>
             )}

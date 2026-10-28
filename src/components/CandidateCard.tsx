@@ -38,8 +38,8 @@ export function cardTitle(c: Candidate): string {
 
 function basisText(c: Candidate): string {
   if (c.basis === 'pasted-link') return 'From your pasted link';
-  if (c.kind === 'search') return 'Search shortcut. Results aren’t found accounts';
-  if (PLATFORMS[c.platform].ambiguous) return 'A guess. Only matches if this is your custom URL';
+  if (c.kind === 'search') return 'Search shortcut, not a found account';
+  if (PLATFORMS[c.platform].ambiguous) return 'Only matches if this is your custom URL';
   return 'From your username';
 }
 
@@ -78,14 +78,14 @@ function StatusBlock({ candidate }: { candidate: Candidate }) {
     );
   }
   if (lookup.status === 'not-found') {
-    return <p>No account with this username. Covers only this exact username.</p>;
+    return <p>No account with this exact username.</p>;
   }
   if (lookup.status === 'unable') {
     const waiting = retryAt !== undefined && now < retryAt;
     return (
       <div className="card-body">
         <p>{lookup.detail}</p>
-        <p className="card-soft">This isn’t a result either way. Open it and check yourself.</p>
+        <p className="card-soft">Not a result either way. Open it yourself.</p>
         <div>
           <button type="button" className="btn btn-ghost btn-sm" disabled={waiting} onClick={() => recheck(candidate)}>
             <Icon name="refresh" size={15} /> {waiting && retryAt ? `Retry after ${formatClock(retryAt)}` : 'Try again'}
@@ -222,7 +222,7 @@ export function CandidateCard({
       {identity === 'mine' && interactive && (
         <div className="mine-panel">
           {candidate.kind === 'search' ? (
-            <p className="card-soft">Found it? Paste its link on step 1 to review it properly.</p>
+            <p className="card-soft">Found it? Paste the link on step 1.</p>
           ) : (
             <Checklist candidate={candidate} inline />
           )}

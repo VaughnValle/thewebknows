@@ -8,6 +8,7 @@
   --line: #e7e7e7;
   --soft: #f4f4f4;
   --soft-2: #ececec;
+  --line-strong: #cfcfcf;
 
   /* Review states — the only color in the UI. Text on them is always near-black. */
   --mine: #10c46c;
@@ -34,6 +35,7 @@
     --line: #232323;
     --soft: #0f0f0f;
     --soft-2: #1a1a1a;
+    --line-strong: #3a3a3a;
     --notmine: #111111;
     --notmine-fg: #6e6e6e;
     color-scheme: dark;
@@ -46,6 +48,7 @@
   --line: #232323;
   --soft: #0f0f0f;
   --soft-2: #1a1a1a;
+  --line-strong: #3a3a3a;
   --notmine: #111111;
   --notmine-fg: #6e6e6e;
   color-scheme: dark;
@@ -3344,6 +3347,6 @@ details[open] > :not(summary) {
 .reveal-fp-label {
   font-size: 0.86rem;
   color: var(--muted);
-  max-width: 40ch;
+  max-width: 48ch;
   text-align: center;
 }

@@ -126,7 +126,7 @@ export function StartStep() {
 
         <p className="hero-note">
           {contacted.length > 0
-            ? `Only ${contacted.join(' and ')} receive${contacted.length === 1 ? 's' : ''} your usernames, to check they exist. Everything else, you open yourself.`
+            ? `Only ${contacted.join(' and ')} ${contacted.length === 1 ? 'is' : 'are'} asked if your username exists. The rest you open yourself.`
             : 'Nothing is sent anywhere. You open each link yourself.'}
         </p>
 
@@ -173,7 +173,7 @@ export function StartStep() {
 
             <div className="field">
               <label htmlFor="display-name" className="field-label">
-                Your name <span className="optional">for search shortcuts only, not proof of identity</span>
+                Your name <span className="optional">for search links only</span>
               </label>
               <input
                 id="display-name"

@@ -38,6 +38,10 @@ const GUIDE_BUTTONS: { key: GuideKey; label: string }[] = [
   { key: 'deletion', label: 'Deletion instructions' },
 ];
 
+function listNames(names: string[]): string {
+  return names.length < 3 ? names.join(' and ') : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
+}
+
 function profileTitle(c: Candidate) {
   if (c.kind === 'search') return `via “${c.query}”`;
   if (c.platform === 'facebook' && c.handle && isNumericFacebookId(c.handle)) return `ID ${c.handle}`;
@@ -120,11 +124,10 @@ function ProfileCard({ candidate }: { candidate: Candidate }) {
         allowDeselect
         onChange={(p) => dispatch({ type: 'plan', id: candidate.id, plan: p })}
       />
-      {plan === 'keep' && <p className="plan-note">Good call if it’s meant to be found, like a portfolio or work profile.</p>}
+      {plan === 'keep' && <p className="plan-note">Good call if it’s meant to be found, like a portfolio.</p>}
       {plan === 'delete' && (
         <p className="plan-note">
-          Deleting can remove things you want to keep. Download your data first, or consider deactivating. This site never
-          deletes anything for you.
+          Download your data first. Deactivating is the gentler option.
         </p>
       )}
 
@@ -139,7 +142,7 @@ function ProfileCard({ candidate }: { candidate: Candidate }) {
           );
         })}
       </div>
-      <p className="guide-meta">Official help pages · reviewed {formatDate(guide.lastReviewed)}</p>
+      <p className="guide-meta">Official help pages, checked {formatDate(guide.lastReviewed)}</p>
       {plan && plan !== 'keep' && <DoneToggle id={`profile:${candidate.id}`} label="I’ve made my changes" />}
     </article>
   );
@@ -170,7 +173,7 @@ export function SummaryStep() {
       {mine.length === 0 ? (
         <div className="empty summary-empty">
           <h2>Nothing confirmed yet</h2>
-          <p>That doesn’t mean you have no footprint. Nothing has been marked Mine in this session yet.</p>
+          <p>Nothing marked Mine yet.</p>
           <button type="button" className="btn btn-secondary" onClick={() => dispatch({ type: 'step', step: 'review' })}>
             <Icon name="arrow-left" /> Back to review
           </button>
@@ -189,7 +192,7 @@ export function SummaryStep() {
                 <p>
                   {unanswered.length > 0
                     ? `Answer the quick check for ${unanswered.map((u) => platformName(u.platform)).join(', ')} to get suggestions.`
-                    : 'Based on your answers, there’s nothing to fix right now.'}
+                    : 'Nothing to fix from your answers.'}
                 </p>
                 {unanswered.length > 0 && (
                   <button type="button" className="btn btn-ghost btn-sm" onClick={() => dispatch({ type: 'step', step: 'review' })}>
@@ -247,8 +250,8 @@ export function SummaryStep() {
                       ))}
                     </span>
                     <span>
-                      <strong>{g.handle}</strong> is yours on {g.platforms.map(platformName).join(' and ')}. A reused handle makes
-                      them easier to link together. That’s fine if you want them connected.
+                      <strong>{g.handle}</strong> is yours on {listNames(g.platforms.map(platformName))}. One handle everywhere makes
+                      these easy to link. Fine, if that’s what you want.
                     </span>
                   </p>
                 ))}
@@ -297,8 +300,7 @@ export function SummaryStep() {
             {showProfiles && (
               <div id="confirmed-profiles" className="profiles-panel">
                 <p className="small muted">
-                  <strong>API-confirmed</strong> means the platform’s public API returned it. <strong>You marked this public</strong>{' '}
-                  is your own answer. We don’t verify it.
+                  <strong>API-confirmed</strong> comes from the platform. <strong>You marked this public</strong> is your answer.
                 </p>
                 <div className="card-grid">
                   {mine.map((cand, i) => (

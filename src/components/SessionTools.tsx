@@ -27,7 +27,7 @@ export function ExportPanel() {
 
   return (
     <div className="export-panel">
-      <p className="small">Saved to your device, never uploaded. It may contain personal info, so choose what goes in:</p>
+      <p className="small">Saved to your device only. Choose what goes in:</p>
       <div className="export-options">
         <label className="check">
           <input type="checkbox" checked={opts.includeHandles} onChange={set('includeHandles')} />
@@ -90,10 +90,7 @@ export function ClearButton({ className = 'btn btn-danger btn-sm', label = 'Clea
       </button>
       <dialog ref={dialogRef} className="dialog" aria-labelledby="clear-title">
         <h2 id="clear-title">Clear this session?</h2>
-        <p>Everything you entered and every answer disappears. Nothing is stored anywhere else by this site.</p>
-        <p className="small muted">
-          It can’t erase your browser history, downloaded files, or what sites you visited or checked may have logged.
-        </p>
+        <p>Everything you entered and every answer disappears.</p>
         <div className="card-actions">
           <button type="button" className="btn btn-ghost" onClick={() => dialogRef.current?.close()}>
             Cancel

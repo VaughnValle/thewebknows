@@ -70,7 +70,7 @@ export function buildExport(state: SessionState, options: ExportOptions, now = n
     app: 'The Web Knows Me (thewebknows.me)',
     exportedAt: now.toISOString(),
     about:
-      'A private self-check. "API-confirmed" means a supported public API returned it. Everything else is your own review. Candidate links are not found accounts, and a shared username is not proof that accounts belong to the same person.',
+      'A private self-check. "API-confirmed" came from a public API. Everything else is your own review. Candidate links are not found accounts.',
     versions: { platformDirectory: DIRECTORY_VERSION, guides: GUIDES_VERSION },
     goal: state.input.goal,
     counts: {

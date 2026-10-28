@@ -67,12 +67,12 @@ export function BrowserReveal({ onCheckProfiles }: { onCheckProfiles: () => void
       {fingerprint && (
         <div className="reveal-fp" aria-label="Your browser fingerprint">
           <ScrambleText text={fingerprint} delay={1450} className="reveal-fp-code" />
-          <span className="reveal-fp-label">Your browser’s fingerprint — it recognises you even without cookies</span>
+          <span className="reveal-fp-label">Your browser’s fingerprint. It follows you even without cookies.</span>
         </div>
       )}
 
       <p className="reveal-note">
-        <Icon name="lock" size={14} /> Read from your own browser and connection. Shown only to you, never stored.
+        <Icon name="lock" size={14} /> Read from your own browser. Seen only by you.
       </p>
 
       <div className="reveal-actions">

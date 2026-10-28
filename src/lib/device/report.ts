@@ -308,7 +308,7 @@ export function browserFixes(s: Signals | null, who: WhoAmI | null): BrowserFix[
     fixes.push({
       id: 'browser:ip',
       title: 'Your city and internet provider are visible to every site you visit',
-      why: 'If that matters to you, a trustworthy VPN or Tor Browser shows sites a different address.',
+      why: 'A trustworthy VPN or Tor Browser shows them a different address.',
       link: { label: 'Choosing a VPN', url: 'https://ssd.eff.org/module/choosing-vpn-thats-right-you' },
     });
   }
@@ -316,7 +316,7 @@ export function browserFixes(s: Signals | null, who: WhoAmI | null): BrowserFix[
     fixes.push({
       id: 'browser:gpc',
       title: 'Turn on Global Privacy Control',
-      why: 'It asks every site not to sell or share your data, and some laws require them to listen.',
+      why: 'Tells every site not to sell or share your data. Some laws make them listen.',
       link: { label: 'How to turn it on', url: 'https://globalprivacycontrol.org/' },
     });
   }
@@ -324,7 +324,7 @@ export function browserFixes(s: Signals | null, who: WhoAmI | null): BrowserFix[
     fixes.push({
       id: 'browser:fingerprint',
       title: 'Make your browser harder to recognise',
-      why: 'Brave, Firefox in strict mode and Tor Browser blur the traits that make up your fingerprint.',
+      why: 'Brave, Firefox in strict mode and Tor Browser blur the traits behind your fingerprint.',
       link: { label: 'Test your browser', url: 'https://coveryourtracks.eff.org/' },
     });
   }

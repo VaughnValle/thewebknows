@@ -64,7 +64,7 @@ export function summarizeBlueskyProfile(p: BlueskyProfile, requested: string) {
   ];
   if (optedOutOfLoggedOut) {
     notes.unshift(
-      'This account asks apps not to show it to logged-out visitors. The API still returns it, and apps may or may not honor the request.',
+      'This account asks apps to hide it from logged-out visitors. The API still returns it.',
     );
   }
   return { profile: { handle, displayName, bio, facts, notes }, observations };

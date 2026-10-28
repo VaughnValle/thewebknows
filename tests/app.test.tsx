@@ -153,7 +153,7 @@ describe('end-to-end flow (mocked APIs)', () => {
 
     const gh = await screen.findByRole('article', { name: /GitHub: @janedoe/ });
     await within(gh).findByText('Unable to check right now');
-    expect(within(gh).getByText(/isn.t a result either way/i)).toBeInTheDocument();
+    expect(within(gh).getByText(/not a result either way/i)).toBeInTheDocument();
     expect(within(gh).getByRole('link', { name: /open to check/i })).toHaveAttribute('href', 'https://github.com/janedoe');
     expect(within(gh).getByRole('button', { name: /retry after/i })).toBeDisabled();
     expect(within(gh).getByRole('button', { name: /^Mine/ })).toBeInTheDocument();
@@ -180,7 +180,7 @@ describe('end-to-end flow (mocked APIs)', () => {
     await user.type(screen.getByLabelText('Your usernames'), 'janedoe');
     await user.click(screen.getByRole('button', { name: /check my footprint/i }));
     await user.click(await screen.findByRole('button', { name: /see my summary/i }));
-    expect(screen.getByText(/doesn.t mean you have no footprint/i)).toBeInTheDocument();
+    expect(screen.getByText(/nothing marked mine yet/i)).toBeInTheDocument();
   });
 
   it('asks for input before starting', async () => {
@@ -227,7 +227,7 @@ describe('end-to-end flow (mocked APIs)', () => {
     // "What sites can't see" is its own standalone, reassuring section.
     expect(screen.getByRole('heading', { name: /what sites can’t see/i })).toBeVisible();
     // The live demos live in their own deck below.
-    expect(screen.getByRole('heading', { name: /want to dig deeper/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /try it yourself/i })).toBeInTheDocument();
     for (const label of [/check a photo before you post it/i, /your local network/i, /the autofill trap/i, /which sites you’re logged into/i]) {
       expect(screen.getByRole('button', { name: label })).toBeInTheDocument();
     }

@@ -19,8 +19,8 @@ export function NetworkLeak() {
   return (
     <>
       <p className="report-blurb">
-        Through WebRTC, a page can ask your browser for the address your device uses inside your own home or office network. No
-        permission is requested. Nothing here is sent anywhere.
+        A page can ask your browser for the address your device uses inside your home or office network. No permission
+        needed.
       </p>
 
       {state.phase === 'idle' && (
@@ -37,8 +37,7 @@ export function NetworkLeak() {
         <div className="demo-result" aria-live="polite">
           {state.found.length === 0 ? (
             <p className="demo-ok">
-              <Icon name="check-circle" size={18} /> Your browser didn’t hand out a local address. It may be blocking WebRTC, which
-              is good for privacy.
+              <Icon name="check-circle" size={18} /> Your browser didn’t hand out a local address. Good.
             </p>
           ) : (
             <>
@@ -52,14 +51,14 @@ export function NetworkLeak() {
               </ul>
               <p className="small muted">
                 {masked
-                  ? 'Your browser masks this as a random “.local” name, which limits what sites learn. Older browsers and some VPN setups leak the real address instead.'
-                  : 'This is your real address on your local network. A site can use it to guess your router and probe devices around you.'}
+                  ? 'Your browser masks it as a random “.local” name. Older browsers and some VPN setups leak the real address.'
+                  : 'Your real address on your local network. A site could use it to guess your router and probe devices around you.'}
               </p>
             </>
           )}
           <p className="small muted">
-            A fuller “scan” of nearby devices is possible on plain, unprotected sites. This site can’t do it to you: its security
-            policy only allows connections to itself and the two profile APIs.
+            A plain site could go further and scan nearby devices. This one can’t: its security policy only lets it talk to
+            itself and the two profile APIs.
           </p>
         </div>
       )}

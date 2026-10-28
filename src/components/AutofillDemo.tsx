@@ -31,8 +31,8 @@ export function AutofillDemo() {
   return (
     <>
       <p className="report-blurb">
-        A form can show one harmless field while hiding others. If you let your browser autofill the visible one, it can fill the
-        hidden ones too, handing over details you never saw. Try it: click the field and choose a saved profile.
+        One visible field, six hidden ones. Let your browser autofill the visible one and it may fill them all. Try it: click
+        the field and pick a saved profile.
       </p>
 
       {/* The visible field looks innocent; the others are off-screen but still autofilled. */}
@@ -62,8 +62,7 @@ export function AutofillDemo() {
         <div className="demo-result" aria-live="polite">
           {captured.length === 0 ? (
             <p className="demo-ok">
-              <Icon name="check-circle" size={18} /> Nothing was captured. You didn’t use autofill, or your browser didn’t fill the
-              hidden fields. That’s the safe outcome.
+              <Icon name="check-circle" size={18} /> Nothing captured. You didn’t use autofill, or your browser didn’t fill the hidden fields.
             </p>
           ) : (
             <>
@@ -78,7 +77,7 @@ export function AutofillDemo() {
                   </div>
                 ))}
               </dl>
-              <p className="small muted">This never left your browser. A real attacker’s form would send it on submit.</p>
+              <p className="small muted">This never left your browser. A real attacker’s form would.</p>
             </>
           )}
         </div>

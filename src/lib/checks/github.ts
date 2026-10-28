@@ -88,7 +88,7 @@ export function summarizeGitHubUser(user: GitHubUser, requested: string) {
       bio,
       facts,
       notes: [
-        "This is what GitHub's public API returns. The profile page itself may show more, such as pinned repositories, contributions and commit email addresses.",
+        'The profile page may show more: pinned repos, contributions, commit emails.',
       ],
     },
     observations,
