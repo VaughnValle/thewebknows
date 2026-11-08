@@ -17,7 +17,7 @@ const GOALS: { value: PrivacyGoal; label: string }[] = [
   { value: 'curious', label: 'Just curious' },
 ];
 
-const HEADLINE = ['Find', 'out', 'what', 'your', 'public', 'profiles'];
+const HEADLINE = ['Find', 'out', 'what', 'your', 'usernames'];
 
 export function StartStep() {
   const { state, dispatch, startRun } = useSession();
@@ -67,8 +67,6 @@ export function StartStep() {
           <RevealWord word="reveal." />
         </span>
       </h2>
-
-      <p className="hero-sub">Free. No account. Nothing saved.</p>
 
       <form className="start-form" onSubmit={submit} noValidate>
         <div className="search-bar">
