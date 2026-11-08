@@ -12,10 +12,10 @@ const TITLE: Seg[] = [{ t: 'The web already knows this about you.' }];
 /** Intro phases: 0 kicker, 1 title, 2 sentence, 3 sharper facts, 4 fingerprint, 5 everything. */
 type Phase = 0 | 1 | 2 | 3 | 4 | 5;
 const DONE: Phase = 5;
-const MS_PER_CHAR: Record<Exclude<Phase, 5>, number> = { 0: 45, 1: 55, 2: 24, 3: 24, 4: 45 };
-/** Beats around each emphasised value, so the eye lands on it. */
-const PAUSE_BEFORE_EM = 650;
-const PAUSE_AFTER_EM = 450;
+const MS_PER_CHAR: Record<Exclude<Phase, 5>, number> = { 0: 45, 1: 55, 2: 34, 3: 34, 4: 55 };
+/** A short breath before each value, then a longer hold once it's fully typed, so it sinks in. */
+const PAUSE_BEFORE_EM = 250;
+const PAUSE_AFTER_EM = 950;
 
 /** The intro plays once per page load, not every time you come back to this step. */
 let introPlayed = false;
