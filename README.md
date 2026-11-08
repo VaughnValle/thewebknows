@@ -1,6 +1,6 @@
 # The Web Knows Me — thewebknows.me
 
-**Find out what your public profiles reveal.** A free, private self-check of your own social profiles. No account, no server, nothing saved.
+**See what the web already knows about you.** Your location, device, browser and public profiles, then what to do about them. No account, no server, nothing saved.
 
 Made by [Vaughn Valle](https://github.com/VaughnValle).
 

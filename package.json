@@ -2,7 +2,7 @@
   "name": "thewebknows",
   "private": true,
   "version": "0.1.0",
-  "description": "The Web Knows Me \u2014 a free, private social-footprint self-check.",
+  "description": "The Web Knows Me: see what the web already knows about you.",
   "author": {
     "name": "Vaughn Valle",
     "url": "https://github.com/VaughnValle"
