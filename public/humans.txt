@@ -1,0 +1,8 @@
+/* TEAM */
+Maker: Vaughn Valle
+Site: https://thewebknows.me
+GitHub: https://github.com/VaughnValle
+
+/* SITE */
+Stack: React, TypeScript, Vite, Cloudflare Workers
+Privacy: no accounts, no cookies, no analytics

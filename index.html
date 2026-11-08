@@ -8,7 +8,10 @@
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
-    <meta name="description" content="See what any website knows about you, then check what your public profiles reveal. Free. No account. Nothing saved." />
+    <meta name="description" content="See what any website knows about you, then check what your public profiles reveal. Free. No account. Nothing saved. Made by Vaughn Valle." />
+    <meta name="author" content="Vaughn Valle" />
+    <meta name="creator" content="Vaughn Valle" />
+    <link rel="author" href="https://github.com/VaughnValle" />
 
     <!-- Link previews (Messenger, iMessage, WhatsApp, Slack, X, LinkedIn…) -->
     <meta property="og:type" content="website" />
@@ -30,9 +33,62 @@
     <meta name="twitter:image:alt" content="Find out what your public profiles reveal. thewebknows.me" />
 
     <link rel="canonical" href="https://thewebknows.me/" />
+    <link rel="author" type="text/plain" href="/humans.txt" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>The Web Knows Me · What the web knows about you</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://thewebknows.me/#vaughn",
+            "name": "Vaughn Valle",
+            "url": "https://github.com/VaughnValle",
+            "sameAs": [
+              "https://github.com/VaughnValle"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://thewebknows.me/#site",
+            "url": "https://thewebknows.me/",
+            "name": "The Web Knows Me",
+            "description": "A free self-check for your digital footprint. See what any website knows about you, then check what your public profiles reveal.",
+            "author": {
+              "@id": "https://thewebknows.me/#vaughn"
+            },
+            "creator": {
+              "@id": "https://thewebknows.me/#vaughn"
+            },
+            "publisher": {
+              "@id": "https://thewebknows.me/#vaughn"
+            },
+            "inLanguage": "en"
+          },
+          {
+            "@type": "WebApplication",
+            "@id": "https://thewebknows.me/#app",
+            "name": "The Web Knows Me",
+            "url": "https://thewebknows.me/",
+            "applicationCategory": "SecurityApplication",
+            "operatingSystem": "Any",
+            "browserRequirements": "Requires JavaScript",
+            "isAccessibleForFree": true,
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "author": {
+              "@id": "https://thewebknows.me/#vaughn"
+            },
+            "image": "https://thewebknows.me/og-image.png"
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

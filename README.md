@@ -2,6 +2,8 @@
 
 **Find out what your public profiles reveal.** A free, private self-check of your own social profiles. No account, no server, nothing saved.
 
+Made by [Vaughn Valle](https://github.com/VaughnValle).
+
 ## Run it
 
 ```bash

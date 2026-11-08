@@ -37,7 +37,9 @@ export function App({ deviceLoaders }: { deviceLoaders?: DeviceLoaders } = {}) {
         <p>
           <strong>The Web Knows Me</strong> · A free self-check for your digital footprint.
         </p>
-        <p>No accounts. No cookies. No analytics.</p>
+        <p>
+          Made by <a href="https://github.com/VaughnValle" target="_blank" rel="noopener noreferrer" className="footer-credit">Vaughn Valle</a>. No accounts. No cookies. No analytics.
+        </p>
       </footer>
     </DeviceProvider>
   );

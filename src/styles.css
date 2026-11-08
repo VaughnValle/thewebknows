@@ -1811,8 +1811,17 @@ details[open] > :not(summary) {
   justify-content: space-between;
   gap: 8px 24px;
 }
-.site-footer strong {
+.site-footer strong,
+.footer-credit {
   color: var(--fg);
+}
+.footer-credit {
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-strong);
+  transition: border-color 0.2s;
+}
+.footer-credit:hover {
+  border-color: var(--fg);
 }
 .site-footer p:last-child {
   max-width: 62ch;
