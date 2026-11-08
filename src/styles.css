@@ -3350,3 +3350,54 @@ details[open] > :not(summary) {
   max-width: 48ch;
   text-align: center;
 }
+
+/* ---------- Hero intro (typewriter) ---------- */
+
+.caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 0.95em;
+  margin-left: 0.08em;
+  vertical-align: -0.1em;
+  background: currentColor;
+  animation: caret-blink 1s steps(1) infinite;
+}
+.kicker .caret {
+  width: 0.6em;
+  height: 1em;
+}
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+.reveal-fp-typed {
+  font-family: var(--mono);
+  font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--fg);
+  text-wrap: balance;
+}
+.browser-reveal.is-intro > *,
+.browser-reveal.played-intro > :not(.reveal-fp, .reveal-note, .reveal-actions) {
+  animation: none;
+}
+.browser-reveal.played-intro > .reveal-fp,
+.browser-reveal.played-intro > .reveal-note,
+.browser-reveal.played-intro > .reveal-actions {
+  animation-delay: 0s;
+}
+.browser-reveal.is-intro .kicker,
+.browser-reveal.is-intro .reveal-title {
+  min-height: 1em;
+}
+.reveal-skip {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 24px;
+  color: var(--muted);
+}
+.browser-reveal {
+  position: relative;
+}
