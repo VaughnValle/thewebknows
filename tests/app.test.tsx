@@ -212,7 +212,7 @@ describe('end-to-end flow (mocked APIs)', () => {
   it('shows what the browser reveals, and the full report on demand', async () => {
     const { user } = setup([]);
     expect(screen.getByRole('heading', { name: /the web already knows this about you/i })).toBeInTheDocument();
-    const sentence = await screen.findByText(/You’re in/);
+    const sentence = (await screen.findAllByText(/You’re in/))[0].closest('p')!;
     await waitFor(() => expect(sentence).toHaveTextContent(/Quezon City, Philippines/));
     expect(sentence).toHaveTextContent(/PLDT Inc/);
     expect(sentence).toHaveTextContent(/a Mac/);
@@ -222,7 +222,7 @@ describe('end-to-end flow (mocked APIs)', () => {
 
     await user.click(screen.getByRole('button', { name: /see all \d+ details/i }));
     // Main deck shows the Network card first.
-    expect(screen.getByText('203.0.113.42')).toBeInTheDocument();
+    expect(screen.getAllByText('203.0.113.42').length).toBeGreaterThan(0);
     expect(screen.getByRole('button', { name: /^Your device$/i })).toBeInTheDocument();
     // "What sites can't see" is its own standalone, reassuring section.
     expect(screen.getByRole('heading', { name: /what sites can’t see/i })).toBeVisible();

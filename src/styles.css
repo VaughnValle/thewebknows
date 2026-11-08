@@ -3401,3 +3401,21 @@ details[open] > :not(summary) {
 .browser-reveal {
   position: relative;
 }
+.reveal-facts {
+  max-width: 46ch;
+  font-size: clamp(1rem, 1.9vw, 1.35rem);
+  font-weight: 520;
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+  color: var(--muted);
+  text-wrap: balance;
+}
+.reveal-facts .reveal-value {
+  font-weight: 720;
+}
+.reveal-fp-typed .reveal-value {
+  font-weight: 800;
+}
+.browser-reveal.played-intro > :not(.reveal-fp, .reveal-note, .reveal-actions) {
+  animation: none;
+}

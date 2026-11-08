@@ -3,15 +3,19 @@ import { DeviceReport } from './DeviceReport';
 import { Icon } from './Icon';
 import { ScrambleText } from './ScrambleText';
 import { useDevice } from '../session/DeviceContext';
-import { countryName, deviceName, formatFingerprint, heroChip, parseUserAgent } from '../lib/device/parse';
+import { formatFingerprint } from '../lib/device/parse';
+import { heroFacts, heroFingerprint, heroSentence, segText, type Seg } from '../lib/device/hero';
 
-const KICKER = 'Before you typed anything';
-const TITLE = 'The web already knows this about you.';
-const TAKES_THE = /^(United States|United Kingdom|Philippines|Netherlands|United Arab Emirates|Czech(ia| Republic)|Dominican Republic|Bahamas|Maldives|Gambia)$/;
+const KICKER: Seg[] = [{ t: 'Before you typed anything' }];
+const TITLE: Seg[] = [{ t: 'The web already knows this about you.' }];
 
-/** Intro phases: 0 kicker, 1 title, 2 sentence, 3 fingerprint, 4 everything. */
-type Phase = 0 | 1 | 2 | 3 | 4;
-const MS_PER_CHAR: Record<Exclude<Phase, 4>, number> = { 0: 45, 1: 55, 2: 28, 3: 45 };
+/** Intro phases: 0 kicker, 1 title, 2 sentence, 3 sharper facts, 4 fingerprint, 5 everything. */
+type Phase = 0 | 1 | 2 | 3 | 4 | 5;
+const DONE: Phase = 5;
+const MS_PER_CHAR: Record<Exclude<Phase, 5>, number> = { 0: 45, 1: 55, 2: 24, 3: 24, 4: 45 };
+/** Beats around each emphasised value, so the eye lands on it. */
+const PAUSE_BEFORE_EM = 650;
+const PAUSE_AFTER_EM = 450;
 
 /** The intro plays once per page load, not every time you come back to this step. */
 let introPlayed = false;
@@ -20,91 +24,112 @@ function reduceMotion() {
   return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-function useTypewriter(text: string, active: boolean, ms: number) {
+/** Milliseconds to wait before typing character `i`. */
+function delayAt(segs: Seg[], i: number, ms: number): number {
+  let d = ms;
+  let pos = 0;
+  for (const s of segs) {
+    if (i === pos && s.em && i > 0) d += PAUSE_BEFORE_EM;
+    pos += s.t.length;
+    if (i === pos && s.em) d += PAUSE_AFTER_EM;
+  }
+  return d;
+}
+
+function typingTime(segs: Seg[], ms: number): number {
+  const n = segText(segs).length;
+  let t = 0;
+  for (let i = 0; i < n; i++) t += delayAt(segs, i, ms);
+  return t;
+}
+
+function useTypewriter(segs: Seg[], active: boolean, ms: number) {
   const [n, setN] = useState(0);
+  const total = segText(segs).length;
   useEffect(() => {
     if (!active) return;
     setN(0);
-    const id = setInterval(() => {
-      setN((k) => {
-        if (k >= text.length) {
-          clearInterval(id);
-          return k;
-        }
-        return k + 1;
-      });
-    }, ms);
-    return () => clearInterval(id);
-  }, [text, active, ms]);
-  return active ? text.slice(0, n) : text;
+    let i = 0;
+    let t: ReturnType<typeof setTimeout>;
+    const tick = () => {
+      if (i >= total) return;
+      i++;
+      setN(i);
+      t = setTimeout(tick, delayAt(segs, i, ms));
+    };
+    t = setTimeout(tick, delayAt(segs, 0, ms));
+    return () => clearTimeout(t);
+    // Re-run only when the text itself changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [segText(segs), active, ms]);
+  return active ? Math.min(n, total) : total;
 }
 
-/** Typed text for the intro. Screen readers get the whole string at once. */
-function Typed({ text, phase, at, className }: { text: string; phase: Phase; at: Exclude<Phase, 4>; className?: string }) {
-  const typing = phase === at;
-  const shown = useTypewriter(text, typing, MS_PER_CHAR[at]);
-  if (phase < at) return null;
+/** Hero text in runs; emphasised runs render as values. Screen readers get the whole string at once. */
+function Runs({ segs, shown, scramble }: { segs: Seg[]; shown: number; scramble: boolean }) {
+  let pos = 0;
   return (
-    <span className={className}>
-      <span className="visually-hidden">{text}</span>
-      <span aria-hidden="true">{typing ? shown : text}</span>
-      {typing && <span className="caret" aria-hidden="true" />}
-    </span>
+    <>
+      {segs.map((s, i) => {
+        const start = pos;
+        pos += s.t.length;
+        const visible = Math.max(0, Math.min(s.t.length, shown - start));
+        if (visible === 0) return null;
+        const text = s.t.slice(0, visible);
+        if (!s.em) return <span key={i} aria-hidden="true">{text}</span>;
+        if (scramble) return <ScrambleText key={i} text={text} delay={150 + i * 120} className="reveal-value" />;
+        return (
+          <span key={i} className="reveal-value" aria-hidden="true">
+            {text}
+          </span>
+        );
+      })}
+    </>
   );
 }
 
-function Value({ text, delay, animate }: { text: string | null; delay: number; animate: boolean }) {
-  if (!text) return <span className="reveal-value is-pending" aria-hidden="true" />;
-  if (!animate) return <span className="reveal-value">{text}</span>;
-  return <ScrambleText text={text} delay={delay} className="reveal-value" />;
+function Typed({ segs, phase, at, scramble = false }: { segs: Seg[]; phase: Phase; at: Exclude<Phase, 5>; scramble?: boolean }) {
+  const typing = phase === at;
+  const shown = useTypewriter(segs, typing, MS_PER_CHAR[at]);
+  if (phase < at) return null;
+  return (
+    <>
+      <span className="visually-hidden">{segText(segs)}</span>
+      <Runs segs={segs} shown={typing ? shown : segText(segs).length} scramble={scramble && !typing} />
+      {typing && <span className="caret" aria-hidden="true" />}
+    </>
+  );
 }
 
 /** First screen: what any site can see, before the visitor types anything. */
 export function BrowserReveal({ onCheckProfiles }: { onCheckProfiles: () => void }) {
   const { signals, who, whoStatus, items } = useDevice();
   const [open, setOpen] = useState(false);
-  const [phase, setPhase] = useState<Phase>(() => (introPlayed || reduceMotion() ? 4 : 0));
-  const playedIntro = useRef(phase !== 4);
+  const [phase, setPhase] = useState<Phase>(() => (introPlayed || reduceMotion() ? DONE : 0));
+  const playedIntro = useRef(phase !== DONE);
   const whoRef = useRef(whoStatus);
   whoRef.current = whoStatus;
 
-  const b = signals ? parseUserAgent(signals.ua, { brands: signals.brands, maxTouchPoints: signals.maxTouchPoints, platformVersion: signals.platformVersion }) : null;
-  const browser = b?.browser ? [b.browser, b.version].filter(Boolean).join(' ') : null;
-  const device = b ? deviceName(b) : null;
-  const chip = heroChip(signals?.gpu);
-  const time = signals ? signals.now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : null;
-  const country = who ? countryName(who.country) : null;
-  const place = who
-    ? who.city
-      ? [who.city, country].filter(Boolean).join(', ')
-      : country
-        ? TAKES_THE.test(country)
-          ? `the ${country}`
-          : country
-        : null
-    : null;
-  const isp = who?.isp ? who.isp.replace(/[.\s]+$/, '') : null;
+  const showPlace = whoStatus !== 'unavailable';
+  const sentence = heroSentence(signals, who, showPlace);
+  const facts = heroFacts(signals, who);
+  const fp = heroFingerprint(signals);
   const fingerprint = signals?.fingerprint ? formatFingerprint(signals.fingerprint.hash) : null;
   const shared = items.filter((i) => i.accuracy !== 'hidden').length;
-  const showPlace = whoStatus !== 'unavailable' && (place !== null || whoStatus === 'loading');
-
-  // Plain-text version of the sentence, for the typewriter.
-  const sentenceText = [
-    showPlace && place ? `You’re in ${place}${isp ? `, online through ${isp}` : ''}.` : null,
-    `You’re on ${device ?? 'a device'}${chip ? ` (${chip})` : ''}, using ${browser ?? 'a browser'}, and it’s ${time ?? 'now'} where you are.`,
-  ]
-    .filter(Boolean)
-    .join(' ');
-  const fingerprintText = fingerprint ? `Your browser fingerprint is ${fingerprint}` : '';
 
   // Advance through the intro. Each phase types its line, then holds.
   useEffect(() => {
-    if (phase === 4) {
+    if (phase === DONE) {
       introPlayed = true;
       return;
     }
-    const typed = (phase === 0 ? KICKER : phase === 1 ? TITLE : phase === 2 ? sentenceText : fingerprintText).length * MS_PER_CHAR[phase];
-    const total = phase === 0 ? 3000 : phase === 1 ? 5000 : phase === 2 ? typed + 1400 : typed + 1600;
+    const segs = [KICKER, TITLE, sentence, facts, fp][phase];
+    if (segs.length === 0) {
+      setPhase((p) => (p + 1) as Phase);
+      return;
+    }
+    const typed = typingTime(segs, MS_PER_CHAR[phase as Exclude<Phase, 5>]);
+    const total = phase === 0 ? 3000 : phase === 1 ? 5000 : typed + (phase === 4 ? 1800 : 1400);
     let waited = 0;
     let t: ReturnType<typeof setTimeout>;
     const advance = () => {
@@ -114,7 +139,7 @@ export function BrowserReveal({ onCheckProfiles }: { onCheckProfiles: () => void
         t = setTimeout(advance, 300);
         return;
       }
-      setPhase((p) => (p === 2 && !fingerprintText ? 4 : ((p + 1) as Phase)));
+      setPhase((p) => (p + 1) as Phase);
     };
     t = setTimeout(advance, Math.max(total, typed + 400));
     return () => clearTimeout(t);
@@ -122,56 +147,38 @@ export function BrowserReveal({ onCheckProfiles }: { onCheckProfiles: () => void
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
-  const animate = !playedIntro.current;
-  const done = phase === 4;
+  const scramble = !playedIntro.current;
+  const done = phase === DONE;
 
   return (
     <section className={`browser-reveal${done ? '' : ' is-intro'}${playedIntro.current ? ' played-intro' : ''}`} aria-labelledby="reveal-h">
       <p className="kicker">
-        <Typed text={KICKER} phase={phase} at={0} />
+        <Typed segs={KICKER} phase={phase} at={0} />
       </p>
       <h1 id="reveal-h" tabIndex={-1} data-step-heading className="reveal-title">
-        <Typed text={TITLE} phase={phase} at={1} />
+        <Typed segs={TITLE} phase={phase} at={1} />
       </h1>
 
       {phase >= 2 && (
         <p className="reveal-sentence">
-          {phase === 2 ? (
-            <Typed text={sentenceText} phase={phase} at={2} />
-          ) : (
-            <>
-              {showPlace && (
-                <>
-                  You’re in <Value text={place} delay={150} animate={animate} />
-                  {(who?.isp || whoStatus === 'loading') && (
-                    <>
-                      , online through <Value text={isp} delay={450} animate={animate} />
-                    </>
-                  )}
-                  .{' '}
-                </>
-              )}
-              You’re on <Value text={device} delay={700} animate={animate} />
-              {chip && (
-                <>
-                  {' '}
-                  (<Value text={chip} delay={900} animate={animate} />)
-                </>
-              )}
-              , using <Value text={browser} delay={1050} animate={animate} />, and it’s <Value text={time} delay={1250} animate={animate} /> where you are.
-            </>
-          )}
+          <Typed segs={sentence} phase={phase} at={2} scramble={scramble} />
         </p>
       )}
 
-      {fingerprint && phase === 3 && (
+      {phase >= 3 && facts.length > 0 && (
+        <p className="reveal-facts">
+          <Typed segs={facts} phase={phase} at={3} scramble={scramble} />
+        </p>
+      )}
+
+      {fingerprint && phase === 4 && (
         <p className="reveal-fp-typed">
-          <Typed text={fingerprintText} phase={phase} at={3} />
+          <Typed segs={fp} phase={phase} at={4} />
         </p>
       )}
       {fingerprint && done && (
         <div className="reveal-fp" aria-label="Your browser fingerprint">
-          {animate ? <ScrambleText text={fingerprint} delay={1450} className="reveal-fp-code" /> : <span className="reveal-fp-code">{fingerprint}</span>}
+          {scramble ? <ScrambleText text={fingerprint} delay={1450} className="reveal-fp-code" /> : <span className="reveal-fp-code">{fingerprint}</span>}
           <span className="reveal-fp-label">Your browser’s fingerprint. It follows you even without cookies.</span>
         </div>
       )}
@@ -197,7 +204,7 @@ export function BrowserReveal({ onCheckProfiles }: { onCheckProfiles: () => void
       )}
 
       {!done && (
-        <button type="button" className="btn btn-ghost btn-sm reveal-skip" onClick={() => setPhase(4)}>
+        <button type="button" className="btn btn-ghost btn-sm reveal-skip" onClick={() => setPhase(DONE)}>
           Skip <Icon name="arrow-right" size={14} />
         </button>
       )}
