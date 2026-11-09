@@ -82,9 +82,14 @@ export function heroChip(gpu: string | null | undefined): string | null {
   const name = cleanGpuName(gpu);
   if (!name) return null;
   if (/swiftshader|llvmpipe|software|microsoft basic|mesa|virgl|vmware|vulkan|generic|angle/i.test(name)) return null;
+  // Only a name that reads like real hardware. Privacy browsers hand back their own name instead.
+  if (!/apple|nvidia|geforce|rtx|gtx|quadro|amd|radeon|intel|iris|arc|adreno|mali|powervr|qualcomm|xclipse|tegra/i.test(name)) return null;
   if (name.length > 26) return null;
   return name;
 }
+
+/** Brave and friends report the browser's own name in place of the graphics chip. */
+const NOT_A_GPU = /^(brave|chrome|chromium|firefox|mozilla|safari|webkit|edge|opera|vivaldi|duckduckgo|tor)( browser)?$/i;
 
 /**
  * A friendly, tangible device name for the hero, e.g. "a Mac", "an iPhone".
@@ -117,7 +122,8 @@ export function cleanGpuName(renderer: string | null | undefined): string | null
     .replace(/\s*vs_\d_\d ps_\d_\d/i, '')
     .replace(/\s+/g, ' ')
     .trim();
-  return r || null;
+  if (!r || NOT_A_GPU.test(r)) return null;
+  return r;
 }
 
 const HOSTING = /amazon|aws|google cloud|google llc|microsoft|azure|digitalocean|linode|akamai|hetzner|ovh|vultr|oracle|cloudflare|fastly|scaleway|contabo|leaseweb|choopa|m247|datacamp|hosting|server|vpn|proxy|mullvad|nord|express ?vpn|proton|private internet access|surfshark/i;

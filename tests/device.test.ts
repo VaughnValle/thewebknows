@@ -96,6 +96,10 @@ describe('small formatters', () => {
     expect(heroChip('Vulkan 1.3.0 (SwiftShader Device (Subzero))')).toBeNull();
     expect(heroChip('Mesa Intel(R) UHD Graphics llvmpipe')).toBeNull();
     expect(heroChip(null)).toBeNull();
+    // Brave reports its own name as the renderer; that's not a chip.
+    expect(heroChip('Brave')).toBeNull();
+    expect(cleanGpuName('Brave')).toBeNull();
+    expect(heroChip('ANGLE (Qualcomm, Adreno (TM) 740, OpenGL ES 3.2)')).toBe('Adreno (TM) 740');
   });
 
   it('guesses network types without overclaiming', () => {
