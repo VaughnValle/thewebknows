@@ -133,7 +133,7 @@ describe('end-to-end flow (mocked APIs)', () => {
     await user.click(screen.getByRole('button', { name: /review your confirmed profiles 2/i }));
     expect(screen.getAllByRole('article')).toHaveLength(2);
     expect(screen.getByRole('heading', { name: /remove your personal email or phone number from instagram/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /username reuse/i }).nextElementSibling).toHaveTextContent(/You use janedoe on GitHub and Instagram/);
+    expect(screen.getByRole('heading', { name: /username reuse/i }).nextElementSibling).toHaveTextContent(/The username “janedoe” is yours on both GitHub and Instagram\./);
 
     // No danger score or alarming words anywhere.
     expect(document.body.textContent).not.toMatch(/danger|risk score|exposed!|alarming|hacker|attacker/i);

@@ -250,8 +250,9 @@ export function SummaryStep() {
                       ))}
                     </span>
                     <span>
-                      You use <strong>{g.handle}</strong> on {listNames(g.platforms.map(platformName))}. Using the same handle everywhere
-                      makes it easy for anyone to link these profiles together, which is fine if that’s what you want.
+                      The username <strong>“{g.handle}”</strong> is yours on {g.platforms.length === 2 ? 'both ' : ''}
+                      {listNames(g.platforms.map(platformName))}. Using one handle everywhere makes it easy for adversaries to link them,
+                      but it’s fine and can be convenient if that’s what you want for discoverability.
                     </span>
                   </p>
                 ))}

@@ -151,7 +151,7 @@ export function nextFixes(state: SessionState, limit = 3): Fix[] {
             ...base,
             id: `fix:contact:${c.id}`,
             title: `Remove your personal email or phone number from ${name}${at}`,
-            why: 'Anyone who visits your profile can copy it.',
+            why: 'Anyone who will visit the site can see it.',
             guide: guideFor(c.platform, 'contact'),
             priority: 100 + weight('contact'),
           });
@@ -204,7 +204,7 @@ export function nextFixes(state: SessionState, limit = 3): Fix[] {
     fixes.push({
       id: `fix:reuse:${group.handle}`,
       title: `You use the same handle “${group.handle}” on ${group.platforms.map(platformName).join(' and ')}`,
-      why: 'Using the same handle everywhere makes it easy for anyone to link these profiles together, which is fine if that’s what you want.',
+      why: 'Using one handle everywhere makes it easy for adversaries to link them, but it’s fine and can be convenient if that’s what you want for discoverability.',
       basis: 'Profiles you confirmed',
       platforms: group.platforms,
       priority: 45 + weight('linked'),
