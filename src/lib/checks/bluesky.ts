@@ -83,7 +83,7 @@ export async function checkBluesky(
       checkedAt: now,
       reason: 'rate-limited',
       retryAt: blocked,
-      detail: `Bluesky asked us to slow down. Try again around ${formatClock(blocked)}.`,
+      detail: `Bluesky asked this tool to slow down. Try again around ${formatClock(blocked)}.`,
     };
   }
   if (guard.requestsThisSession >= guard.sessionCap) {
@@ -119,7 +119,7 @@ export async function checkBluesky(
   if (res.ok) {
     const body = (await readJson(res)) as BlueskyProfile | null;
     if (!body || typeof body !== 'object') {
-      return { status: 'unable', checkedAt, reason: 'server', detail: 'Bluesky sent a response we could not read.' };
+      return { status: 'unable', checkedAt, reason: 'server', detail: 'Bluesky sent a response that this tool could not read.' };
     }
     return { status: 'api-returned', checkedAt, ...summarizeBlueskyProfile(body, handle) };
   }
@@ -131,7 +131,7 @@ export async function checkBluesky(
       checkedAt,
       reason: 'rate-limited',
       retryAt,
-      detail: `Bluesky asked us to slow down. Try again around ${formatClock(retryAt)}.`,
+      detail: `Bluesky asked this tool to slow down. Try again around ${formatClock(retryAt)}.`,
     };
   }
 

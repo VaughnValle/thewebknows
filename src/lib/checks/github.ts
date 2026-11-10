@@ -88,7 +88,7 @@ export function summarizeGitHubUser(user: GitHubUser, requested: string) {
       bio,
       facts,
       notes: [
-        'The profile page may show more: pinned repos, contributions, commit emails.',
+        'The profile page itself may show more than this, like pinned repos, contributions and commit emails.',
       ],
     },
     observations,
@@ -146,7 +146,7 @@ export async function checkGitHub(
   if (res.ok) {
     const body = (await readJson(res)) as GitHubUser | null;
     if (!body || typeof body !== 'object') {
-      return { status: 'unable', checkedAt, reason: 'server', detail: 'GitHub sent a response we could not read.' };
+      return { status: 'unable', checkedAt, reason: 'server', detail: 'GitHub sent a response that this tool could not read.' };
     }
     return { status: 'api-returned', checkedAt, ...summarizeGitHubUser(body, username) };
   }

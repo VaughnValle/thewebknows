@@ -179,14 +179,14 @@ export function BrowserReveal({ onCheckProfiles }: { onCheckProfiles: () => void
       {fingerprint && done && (
         <div className="reveal-fp" aria-label="Your browser fingerprint">
           {scramble ? <ScrambleText text={fingerprint} delay={1450} className="reveal-fp-code" /> : <span className="reveal-fp-code">{fingerprint}</span>}
-          <span className="reveal-fp-label">Your browser’s fingerprint. It follows you even without cookies.</span>
+          <span className="reveal-fp-label">This is your browser’s fingerprint. It enables sites and their owners to track you and your data even without cookies!</span>
         </div>
       )}
 
       {done && (
         <>
           <p className="reveal-note">
-            <Icon name="lock" size={14} /> Read from your own browser. Seen only by you.
+            <Icon name="lock" size={14} /> This site only reads it from your browser session. Only you can see it and it’s not stored once you close the tab, and I can guarantee that!
           </p>
 
           <div className="reveal-actions">

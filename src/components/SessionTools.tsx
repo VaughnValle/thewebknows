@@ -27,7 +27,7 @@ export function ExportPanel() {
 
   return (
     <div className="export-panel">
-      <p className="small">Saved to your device only. Choose what goes in:</p>
+      <p className="small">This file is only saved to your device. You can choose what goes in it:</p>
       <div className="export-options">
         <label className="check">
           <input type="checkbox" checked={opts.includeHandles} onChange={set('includeHandles')} />
@@ -90,7 +90,7 @@ export function ClearButton({ className = 'btn btn-danger btn-sm', label = 'Clea
       </button>
       <dialog ref={dialogRef} className="dialog" aria-labelledby="clear-title">
         <h2 id="clear-title">Clear this session?</h2>
-        <p>Everything you entered and every answer disappears.</p>
+        <p>Everything you entered and every answer you gave will be deleted.</p>
         <div className="card-actions">
           <button type="button" className="btn btn-ghost" onClick={() => dialogRef.current?.close()}>
             Cancel

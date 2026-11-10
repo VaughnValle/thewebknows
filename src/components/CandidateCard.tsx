@@ -37,10 +37,10 @@ export function cardTitle(c: Candidate): string {
 }
 
 function basisText(c: Candidate): string {
-  if (c.basis === 'pasted-link') return 'From your pasted link';
-  if (c.kind === 'search') return 'Search shortcut, not a found account';
-  if (PLATFORMS[c.platform].ambiguous) return 'Only matches if this is your custom URL';
-  return 'From your username';
+  if (c.basis === 'pasted-link') return 'This came from the link you pasted.';
+  if (c.kind === 'search') return 'This is a search shortcut, not a found account.';
+  if (PLATFORMS[c.platform].ambiguous) return 'This only matches if it’s your custom URL.';
+  return 'This link was built from your username.';
 }
 
 function useNow(active: boolean) {
@@ -78,14 +78,14 @@ function StatusBlock({ candidate }: { candidate: Candidate }) {
     );
   }
   if (lookup.status === 'not-found') {
-    return <p>No account with this exact username.</p>;
+    return <p>The API has no account with this exact username.</p>;
   }
   if (lookup.status === 'unable') {
     const waiting = retryAt !== undefined && now < retryAt;
     return (
       <div className="card-body">
         <p>{lookup.detail}</p>
-        <p className="card-soft">Not a result either way. Open it yourself.</p>
+        <p className="card-soft">This isn’t a result either way, so you’ll have to open it and check it yourself.</p>
         <div>
           <button type="button" className="btn btn-ghost btn-sm" disabled={waiting} onClick={() => recheck(candidate)}>
             <Icon name="refresh" size={15} /> {waiting && retryAt ? `Retry after ${formatClock(retryAt)}` : 'Try again'}
@@ -222,7 +222,7 @@ export function CandidateCard({
       {identity === 'mine' && interactive && (
         <div className="mine-panel">
           {candidate.kind === 'search' ? (
-            <p className="card-soft">Found it? Paste the link on step 1.</p>
+            <p className="card-soft">If you found your profile, you can paste its link on step 1 to review it.</p>
           ) : (
             <Checklist candidate={candidate} inline />
           )}

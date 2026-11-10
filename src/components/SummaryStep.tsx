@@ -110,7 +110,7 @@ function ProfileCard({ candidate }: { candidate: Candidate }) {
                   {values.length ? values.map((v) => v.value).join(' · ') : 'Possibly in the bio'}
                 </span>
               )}
-              {r.conflict && <span className="field-values">You said no, but the API returned something. Worth a look.</span>}
+              {r.conflict && <span className="field-values">You said no, but the API returned something, so it’s worth a look.</span>}
             </div>
           );
         })}
@@ -124,10 +124,10 @@ function ProfileCard({ candidate }: { candidate: Candidate }) {
         allowDeselect
         onChange={(p) => dispatch({ type: 'plan', id: candidate.id, plan: p })}
       />
-      {plan === 'keep' && <p className="plan-note">Good call if it’s meant to be found, like a portfolio.</p>}
+      {plan === 'keep' && <p className="plan-note">That’s a good call if this profile is meant to be found, like a portfolio.</p>}
       {plan === 'delete' && (
         <p className="plan-note">
-          Download your data first. Deactivating is the gentler option.
+          Make sure you download your data first. You can also deactivate the account instead, which is easier to undo.
         </p>
       )}
 
@@ -142,7 +142,7 @@ function ProfileCard({ candidate }: { candidate: Candidate }) {
           );
         })}
       </div>
-      <p className="guide-meta">Official help pages, checked {formatDate(guide.lastReviewed)}</p>
+      <p className="guide-meta">These are official help pages, last checked on {formatDate(guide.lastReviewed)}.</p>
       {plan && plan !== 'keep' && <DoneToggle id={`profile:${candidate.id}`} label="I’ve made my changes" />}
     </article>
   );
@@ -173,7 +173,7 @@ export function SummaryStep() {
       {mine.length === 0 ? (
         <div className="empty summary-empty">
           <h2>Nothing confirmed yet</h2>
-          <p>Nothing marked Mine yet.</p>
+          <p>You haven’t marked any profile as Mine yet.</p>
           <button type="button" className="btn btn-secondary" onClick={() => dispatch({ type: 'step', step: 'review' })}>
             <Icon name="arrow-left" /> Back to review
           </button>
@@ -191,8 +191,8 @@ export function SummaryStep() {
                 <h2>Nothing stands out</h2>
                 <p>
                   {unanswered.length > 0
-                    ? `Answer the quick check for ${unanswered.map((u) => platformName(u.platform)).join(', ')} to get suggestions.`
-                    : 'Nothing to fix from your answers.'}
+                    ? `Answer the quick check for ${unanswered.map((u) => platformName(u.platform)).join(', ')} so this tool can give you suggestions.`
+                    : 'Based on your answers, there’s nothing you need to fix right now.'}
                 </p>
                 {unanswered.length > 0 && (
                   <button type="button" className="btn btn-ghost btn-sm" onClick={() => dispatch({ type: 'step', step: 'review' })}>
@@ -250,8 +250,8 @@ export function SummaryStep() {
                       ))}
                     </span>
                     <span>
-                      <strong>{g.handle}</strong> is yours on {listNames(g.platforms.map(platformName))}. One handle everywhere makes
-                      these easy to link. Fine, if that’s what you want.
+                      You use <strong>{g.handle}</strong> on {listNames(g.platforms.map(platformName))}. Using the same handle everywhere
+                      makes it easy for anyone to link these profiles together, which is fine if that’s what you want.
                     </span>
                   </p>
                 ))}
@@ -289,7 +289,7 @@ export function SummaryStep() {
                         profiles <span className="profiles-cta-count">{mine.length}</span>
                       </span>
                     </span>
-                    <span className="profiles-cta-sub">See what each one shows. Keep, edit or delete.</span>
+                    <span className="profiles-cta-sub">See what each profile shows, then decide if you want to keep, edit or delete it.</span>
                   </span>
                   <span className="profiles-cta-arrow" aria-hidden="true">
                     <Icon name="chevron" size={24} />
@@ -300,7 +300,8 @@ export function SummaryStep() {
             {showProfiles && (
               <div id="confirmed-profiles" className="profiles-panel">
                 <p className="small muted">
-                  <strong>API-confirmed</strong> comes from the platform. <strong>You marked this public</strong> is your answer.
+                  <strong>API-confirmed</strong> means the platform’s API returned it. <strong>You marked this public</strong> means it’s your
+                  own answer, and this tool doesn’t verify it.
                 </p>
                 <div className="card-grid">
                   {mine.map((cand, i) => (

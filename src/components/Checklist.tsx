@@ -86,7 +86,7 @@ function StepChecklist({ candidate }: { candidate: Candidate }) {
   return (
     <section className="checklist checklist-inline" aria-label="Optional yes/no questions">
       <p className="checklist-title">
-        <span>{q ? 'Quick check (optional)' : 'All answered'}</span>
+        <span>{q ? 'Quick check (optional)' : 'You answered all of them'}</span>
         <span className="checklist-count">
           {Math.min(qi + 1, CHECKLIST.length)}/{CHECKLIST.length}
         </span>
@@ -94,7 +94,7 @@ function StepChecklist({ candidate }: { candidate: Candidate }) {
       {q && (
         <div className="step-q" key={q.id}>
           <Segmented legend={q.question} options={ANSWERS} value={answers[q.id]} onChange={answer} />
-          {hint.length > 0 && <p className="checklist-hint">API shows: {hint.map((h) => h.label).join(', ')}</p>}
+          {hint.length > 0 && <p className="checklist-hint">The API shows: {hint.map((h) => h.label).join(', ')}</p>}
         </div>
       )}
       {answered.length > 0 && (

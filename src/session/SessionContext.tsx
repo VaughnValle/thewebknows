@@ -57,11 +57,11 @@ export function SessionProvider({ children, createService = () => new CheckServi
     const { input, lookups } = stateRef.current;
     const { usernames, links } = splitUsernamesAndLinks(input.usernamesText, input.linksText);
     if (!usernames.length && !links.length) {
-      return { ok: false, message: 'Add at least one username or profile link to start.' };
+      return { ok: false, message: 'Please add at least one username or profile link to start.' };
     }
     const set = generateCandidates({ usernames, links, displayName: input.displayName, platforms: input.platforms });
     if (!set.platforms.length) {
-      return { ok: false, message: 'Choose at least one platform to check.' };
+      return { ok: false, message: 'Please choose at least one platform to check.' };
     }
     dispatch({ type: 'startRun', set, now: Date.now() });
     for (const c of set.candidates) {

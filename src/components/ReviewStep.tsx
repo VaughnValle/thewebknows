@@ -14,11 +14,11 @@ const SWIPE_THRESHOLD = 110;
 
 function Legend() {
   const rows: [Parameters<typeof Icon>[0]['name'], string, string][] = [
-    ['check-circle', 'API-confirmed', 'GitHub or Bluesky says this username exists. Not proof it’s yours.'],
-    ['external', 'Open to check', 'A link we built, not a found account.'],
-    ['search', 'Search shortcut', 'Opens that site’s search.'],
-    ['dash-circle', 'Not found by API', 'No account with that exact username.'],
-    ['pause', 'Unable to check', 'The API didn’t answer. Open it yourself.'],
+    ['check-circle', 'API-confirmed', 'GitHub’s or Bluesky’s API says this username exists. That doesn’t prove it’s yours.'],
+    ['external', 'Open to check', 'This is a link that this tool built from your username. It’s not a found account.'],
+    ['search', 'Search shortcut', 'This opens that site’s own search.'],
+    ['dash-circle', 'Not found by API', 'The API has no account with that exact username.'],
+    ['pause', 'Unable to check', 'The API didn’t answer, so you have to open it and check it yourself.'],
   ];
   return (
     <details className="legend">
@@ -192,7 +192,7 @@ export function ReviewStep() {
         <h1 tabIndex={-1} data-step-heading>
           Which of these are you?
         </h1>
-        <p className="lede">One at a time. Same username, not always the same person.</p>
+        <p className="lede">Go through them one at a time. The same username doesn’t always mean it’s the same person.</p>
       </header>
 
       {items.length > 0 && (
@@ -225,8 +225,8 @@ export function ReviewStep() {
           <h2>Nothing to review</h2>
           <p>
             {notFound.length
-              ? 'No accounts with these usernames on GitHub or Bluesky, and no other platforms picked.'
-              : 'Those usernames don’t fit the platforms you picked.'}
+              ? 'GitHub and Bluesky have no accounts with these usernames, and you didn’t pick any other platforms.'
+              : 'Those usernames don’t fit the rules of the platforms you picked.'}
           </p>
           <button type="button" className="btn btn-secondary" onClick={() => dispatch({ type: 'step', step: 'start' })}>
             <Icon name="arrow-left" /> Edit
@@ -271,7 +271,7 @@ export function ReviewStep() {
                   <Icon name="check-circle" size={40} />
                   <h2 className="card-handle">All reviewed</h2>
                   <p>
-                    {c.confirmed} mine · {c.unsure} unsure · {c.notMine} not mine
+                    You marked {c.confirmed} as mine, {c.unsure} as unsure and {c.notMine} as not mine.
                   </p>
                   <div className="card-actions">
                     <button type="button" className="btn btn-primary" onClick={() => dispatch({ type: 'step', step: 'summary' })}>
@@ -311,7 +311,7 @@ export function ReviewStep() {
       <div className="review-extras">
         {notFound.length > 0 && (
           <p className="skipped">
-            <Icon name="dash-circle" size={14} /> Not found by API:{' '}
+            <Icon name="dash-circle" size={14} /> These were not found by the API:{' '}
             {notFound.map((n) => `${platformName(n.platform)} ${cardTitle(n)}`).join(', ')}
           </p>
         )}
@@ -323,7 +323,7 @@ export function ReviewStep() {
         )}
         {run.skipped.length > 0 && (
           <p className="skipped">
-            <Icon name="info" size={14} /> Skipped, username doesn’t fit their rules:{' '}
+            <Icon name="info" size={14} /> These platforms were skipped because the username doesn’t fit their rules:{' '}
             {[...new Set(run.skipped.map((s) => platformName(s.platform)))].join(', ')}.
           </p>
         )}
@@ -331,7 +331,7 @@ export function ReviewStep() {
           <p className="skipped">
             <Icon name="search" size={14} />
             <span>
-              Wider web:{' '}
+              You can also search the wider web:{' '}
               {run.webSearches.map((w) => (
                 <ExternalLink key={w.id} href={w.url} className="text-link">
                   {w.query} on DuckDuckGo

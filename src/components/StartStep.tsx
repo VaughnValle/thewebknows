@@ -95,7 +95,7 @@ export function StartStep() {
 
         {parsed.usernames.length === 0 ? (
           <p className="multi-hint" id="usernames-hint">
-            Add <strong>up to {MAX_USERNAMES} usernames</strong>, separated by commas.
+            You can add <strong>up to {MAX_USERNAMES} usernames</strong>, separated by commas.
           </p>
         ) : (
           <div className="chip-line">
@@ -108,10 +108,10 @@ export function StartStep() {
             </ul>
             <span className={`chip-count${parsed.usernames.length > MAX_USERNAMES ? ' is-over' : ''}`} aria-live="polite">
               {parsed.usernames.length > MAX_USERNAMES
-                ? `Only the first ${MAX_USERNAMES} are used`
+                ? `Only the first ${MAX_USERNAMES} usernames are used.`
                 : parsed.usernames.length < MAX_USERNAMES
-                  ? `${parsed.usernames.length} of ${MAX_USERNAMES}. Add more with a comma`
-                  : `${MAX_USERNAMES} of ${MAX_USERNAMES}`}
+                  ? `${parsed.usernames.length} of ${MAX_USERNAMES} added. You can add more with a comma.`
+                  : `${MAX_USERNAMES} of ${MAX_USERNAMES} added.`}
             </span>
           </div>
         )}
@@ -124,8 +124,8 @@ export function StartStep() {
 
         <p className="hero-note">
           {contacted.length > 0
-            ? `Only ${contacted.join(' and ')} ${contacted.length === 1 ? 'is' : 'are'} asked if your username exists. The rest you open yourself.`
-            : 'Nothing is sent anywhere. You open each link yourself.'}
+            ? `This tool checks your username via ${contacted.map((n) => `${n}’s`).join(' and ')} API. For the rest of the social platforms, you manually click the URL link and check it yourself.`
+            : 'This tool doesn’t send your username anywhere. You manually click each URL link and check it yourself.'}
         </p>
 
         <details className="more-options">
@@ -171,7 +171,7 @@ export function StartStep() {
 
             <div className="field">
               <label htmlFor="display-name" className="field-label">
-                Your name <span className="optional">for search links only</span>
+                Your name <span className="optional">This is only used to build search links.</span>
               </label>
               <input
                 id="display-name"

@@ -151,7 +151,7 @@ export function nextFixes(state: SessionState, limit = 3): Fix[] {
             ...base,
             id: `fix:contact:${c.id}`,
             title: `Remove your personal email or phone number from ${name}${at}`,
-            why: 'Anyone who visits can copy it.',
+            why: 'Anyone who visits your profile can copy it.',
             guide: guideFor(c.platform, 'contact'),
             priority: 100 + weight('contact'),
           });
@@ -161,7 +161,7 @@ export function nextFixes(state: SessionState, limit = 3): Fix[] {
             ...base,
             id: `fix:affiliation:${c.id}`,
             title: `Review school, workplace or location details on ${name}${at}`,
-            why: 'Do they need to be public? Could fewer people see them?',
+            why: 'Think about whether these details need to be public, or if fewer people could see them.',
             guide: guideFor(c.platform, 'editProfile'),
             priority: 80 + weight('affiliation'),
           });
@@ -171,7 +171,7 @@ export function nextFixes(state: SessionState, limit = 3): Fix[] {
             ...base,
             id: `fix:oldPosts:${c.id}`,
             title: `Review old posts or photos on ${name}${at}`,
-            why: 'You said there are older posts worth a look. Archive or delete, your call.',
+            why: 'You said there are older posts you want to look over. It’s up to you if you archive or delete them.',
             guide: guideFor(c.platform, 'oldPosts'),
             priority: 70 + weight('oldPosts'),
           });
@@ -181,7 +181,7 @@ export function nextFixes(state: SessionState, limit = 3): Fix[] {
             ...base,
             id: `fix:linked:${c.id}`,
             title: `Check which accounts or sites your ${name} profile links to`,
-            why: 'Links between profiles make them easy to connect.',
+            why: 'Links between your profiles make it easy for anyone to connect them.',
             guide: guideFor(c.platform, 'editProfile'),
             priority: 50 + weight('linked'),
           });
@@ -191,7 +191,7 @@ export function nextFixes(state: SessionState, limit = 3): Fix[] {
             ...base,
             id: `fix:name:${c.id}`,
             title: `Decide whether your full name should appear on ${name}`,
-            why: 'Keep it if this profile is meant to be found, like a portfolio.',
+            why: 'You can keep it if this profile is meant to be found, like a portfolio.',
             guide: guideFor(c.platform, 'editProfile'),
             priority: 40 + weight('name'),
           });
@@ -203,8 +203,8 @@ export function nextFixes(state: SessionState, limit = 3): Fix[] {
   for (const group of usernameReuse(state)) {
     fixes.push({
       id: `fix:reuse:${group.handle}`,
-      title: `Same handle “${group.handle}” on ${group.platforms.map(platformName).join(' and ')}`,
-      why: 'One handle everywhere makes these easy to link. Fine, if that’s what you want.',
+      title: `You use the same handle “${group.handle}” on ${group.platforms.map(platformName).join(' and ')}`,
+      why: 'Using the same handle everywhere makes it easy for anyone to link these profiles together, which is fine if that’s what you want.',
       basis: 'Profiles you confirmed',
       platforms: group.platforms,
       priority: 45 + weight('linked'),
@@ -216,7 +216,7 @@ export function nextFixes(state: SessionState, limit = 3): Fix[] {
     fixes.push({
       id: 'fix:unsure',
       title: `Take another look at ${c.unsure === 1 ? 'the profile' : `the ${c.unsure} profiles`} you marked Unsure`,
-      why: 'If one is yours, it joins this summary. If not, leave it.',
+      why: 'If one of them is yours, mark it as Mine and it’ll be added to this summary. If it’s not, you can leave it.',
       basis: 'Your answers',
       priority: 30,
       goTo: 'review',

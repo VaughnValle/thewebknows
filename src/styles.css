@@ -606,7 +606,7 @@ main {
 .hero-note {
   font-size: 0.86rem;
   color: var(--muted);
-  max-width: 48ch;
+  max-width: 62ch;
 }
 .more-options {
   width: 100%;
@@ -2702,7 +2702,7 @@ details[open] > :not(summary) {
   }
 }
 .reveal-note {
-  max-width: 44ch;
+  max-width: 62ch;
   text-wrap: balance;
   font-size: 0.86rem;
   color: var(--muted);
@@ -3351,7 +3351,7 @@ details[open] > :not(summary) {
 .reveal-fp-label {
   font-size: 0.86rem;
   color: var(--muted);
-  max-width: 48ch;
+  max-width: 62ch;
   text-align: center;
 }
 

@@ -224,7 +224,7 @@ export function DeviceReport() {
           </div>
           {g.id === 'fingerprint' && eff && (
             <ExternalLink href={eff} className="text-link">
-              How unique is it? Test it at EFF
+              You can test how unique it is at EFF’s Cover Your Tracks
             </ExternalLink>
           )}
         </>
@@ -232,7 +232,7 @@ export function DeviceReport() {
     } else if (g.id === 'network') {
       body = (
         <p className="report-blurb">
-          {whoStatus === 'loading' ? 'Looking up your connection…' : 'Couldn’t look up your connection right now. Other sites still can.'}
+          {whoStatus === 'loading' ? 'Looking up your connection…' : 'This site couldn’t look up your connection right now, but other sites still can.'}
         </p>
       );
     } else {
@@ -251,7 +251,7 @@ export function DeviceReport() {
   return (
     <div id="device-report" className="device-report">
       <p className="report-deck-intro">
-        <Icon name="info" size={15} /> What any website learns the moment you open it. All read on your device.
+        <Icon name="info" size={15} /> These are the details that any website can learn about you the moment you open it. This site reads all of them on your device.
       </p>
       <ReportDeck cards={dataCards} />
 
@@ -259,7 +259,7 @@ export function DeviceReport() {
         <h2 id="cantsee-h" className="report-title">
           <Icon name="shield" size={18} /> What sites can’t see
         </h2>
-        <p className="report-blurb">These stay private unless you share them.</p>
+        <p className="report-blurb">These things stay private unless you choose to share them.</p>
         <ul className="cant-see-list">
           {CANT_SEE.map((c) => (
             <li key={c.title}>
@@ -274,7 +274,7 @@ export function DeviceReport() {
           Try it yourself.
         </h2>
         <p className="report-deck-intro">
-          <Icon name="info" size={15} /> Live demos of what a page can do without asking. Everything stays on your device.
+          <Icon name="info" size={15} /> These are live demos of what a web page can do without asking for your permission. Everything stays on your device.
         </p>
         <ReportDeck cards={demoCards} />
       </section>

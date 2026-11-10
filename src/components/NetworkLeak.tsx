@@ -19,8 +19,8 @@ export function NetworkLeak() {
   return (
     <>
       <p className="report-blurb">
-        A page can ask your browser for the address your device uses inside your home or office network. No permission
-        needed.
+        A page can ask your browser for the address your device uses inside your home or office network, and it doesn’t
+        need your permission to do it.
       </p>
 
       {state.phase === 'idle' && (
@@ -37,7 +37,7 @@ export function NetworkLeak() {
         <div className="demo-result" aria-live="polite">
           {state.found.length === 0 ? (
             <p className="demo-ok">
-              <Icon name="check-circle" size={18} /> Your browser didn’t hand out a local address. Good.
+              <Icon name="check-circle" size={18} /> Your browser didn’t hand out a local address, which is good for your privacy.
             </p>
           ) : (
             <>
@@ -51,14 +51,14 @@ export function NetworkLeak() {
               </ul>
               <p className="small muted">
                 {masked
-                  ? 'Your browser masks it as a random “.local” name. Older browsers and some VPN setups leak the real address.'
-                  : 'Your real address on your local network. A site could use it to guess your router and probe devices around you.'}
+                  ? 'Your browser masks it as a random “.local” name. Older browsers and some VPN setups leak the real address instead.'
+                  : 'This is your real address on your local network. A site could use it to guess your router and probe the devices around you.'}
               </p>
             </>
           )}
           <p className="small muted">
-            A plain site could go further and scan nearby devices. This one can’t: its security policy only lets it talk to
-            itself and the two profile APIs.
+            A plain site could go further and scan nearby devices. This site can’t do that because its security policy only
+            lets it talk to itself and the two profile APIs.
           </p>
         </div>
       )}

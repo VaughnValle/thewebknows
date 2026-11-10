@@ -95,7 +95,7 @@ describe('end-to-end flow (mocked APIs)', () => {
     expect(screen.getAllByRole('article')).toHaveLength(1);
 
     // Bluesky "not found" drops out of the deck and is listed separately.
-    expect(await screen.findByText(/Not found by API: Bluesky @janedoe\.bsky\.social/)).toBeInTheDocument();
+    expect(await screen.findByText(/not found by the API: Bluesky @janedoe\.bsky\.social/)).toBeInTheDocument();
     expect(screen.queryByRole('article', { name: /Bluesky/ })).toBeNull();
 
     // Mine keeps the card on screen with the optional checklist, then Next.
@@ -133,7 +133,7 @@ describe('end-to-end flow (mocked APIs)', () => {
     await user.click(screen.getByRole('button', { name: /review your confirmed profiles 2/i }));
     expect(screen.getAllByRole('article')).toHaveLength(2);
     expect(screen.getByRole('heading', { name: /remove your personal email or phone number from instagram/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /username reuse/i }).nextElementSibling).toHaveTextContent(/janedoe is yours on GitHub and Instagram/);
+    expect(screen.getByRole('heading', { name: /username reuse/i }).nextElementSibling).toHaveTextContent(/You use janedoe on GitHub and Instagram/);
 
     // No danger score or alarming words anywhere.
     expect(document.body.textContent).not.toMatch(/danger|risk score|exposed!|alarming|hacker|attacker/i);
@@ -153,7 +153,7 @@ describe('end-to-end flow (mocked APIs)', () => {
 
     const gh = await screen.findByRole('article', { name: /GitHub: @janedoe/ });
     await within(gh).findByText('Unable to check right now');
-    expect(within(gh).getByText(/not a result either way/i)).toBeInTheDocument();
+    expect(within(gh).getByText(/isn’t a result either way/i)).toBeInTheDocument();
     expect(within(gh).getByRole('link', { name: /open to check/i })).toHaveAttribute('href', 'https://github.com/janedoe');
     expect(within(gh).getByRole('button', { name: /retry after/i })).toBeDisabled();
     expect(within(gh).getByRole('button', { name: /^Mine/ })).toBeInTheDocument();
@@ -180,7 +180,7 @@ describe('end-to-end flow (mocked APIs)', () => {
     await user.type(screen.getByLabelText('Your usernames'), 'janedoe');
     await user.click(screen.getByRole('button', { name: /check my footprint/i }));
     await user.click(await screen.findByRole('button', { name: /see my summary/i }));
-    expect(screen.getByText(/nothing marked mine yet/i)).toBeInTheDocument();
+    expect(screen.getByText(/haven’t marked any profile as mine yet/i)).toBeInTheDocument();
   });
 
   it('asks for input before starting', async () => {

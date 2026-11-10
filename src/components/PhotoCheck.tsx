@@ -70,7 +70,8 @@ export function PhotoCheck() {
   return (
     <div className="photo-check">
       <p className="report-blurb">
-        Photos carry where, when and on what they were taken. Pick one to see. Nothing is uploaded.
+        Photos can carry where and when they were taken, and which device took them. Pick a photo to see what yours has. It
+        stays on your device and nothing is uploaded.
       </p>
 
       {!checked ? (
@@ -93,10 +94,10 @@ export function PhotoCheck() {
           <img src={checked.preview} alt="" className="photo-thumb" />
           <div className="photo-facts">
             {!m!.isJpeg ? (
-              <p>Only JPEG photos can be read here, the format most phones and cameras use.</p>
+              <p>This tool can only read JPEG photos, which is the format most phones and cameras use.</p>
             ) : found === 0 ? (
               <p className="photo-clean">
-                <Icon name="check-circle" size={18} /> No hidden location, camera or date found in this photo.
+                <Icon name="check-circle" size={18} /> This photo has no hidden location, camera or date in it.
               </p>
             ) : (
               <>
@@ -106,7 +107,7 @@ export function PhotoCheck() {
                   </p>
                 ) : (
                   <p className="photo-ok">
-                    <Icon name="check-circle" size={18} /> No location inside. Other details are:
+                    <Icon name="check-circle" size={18} /> This photo has no location inside, but it has these other details:
                   </p>
                 )}
                 <dl className="photo-list">
@@ -158,7 +159,7 @@ export function PhotoCheck() {
                   )}
                 </dl>
                 <p className="small muted">
-                  Big platforms strip this when you post. Messaging apps, email, forums and file sharing often keep it.
+                  Big platforms remove this when you post, but messaging apps, email, forums and file sharing often keep it.
                 </p>
               </>
             )}

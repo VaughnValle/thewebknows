@@ -31,8 +31,8 @@ export function AutofillDemo() {
   return (
     <>
       <p className="report-blurb">
-        One visible field, six hidden ones. Let your browser autofill the visible one and it may fill them all. Try it: click
-        the field and pick a saved profile.
+        This form shows one field but hides six more. If you let your browser autofill the visible one, it may fill in all
+        of the hidden ones too. Try it by clicking the field and picking a saved profile.
       </p>
 
       {/* The visible field looks innocent; the others are off-screen but still autofilled. */}
@@ -62,7 +62,7 @@ export function AutofillDemo() {
         <div className="demo-result" aria-live="polite">
           {captured.length === 0 ? (
             <p className="demo-ok">
-              <Icon name="check-circle" size={18} /> Nothing captured. You didn’t use autofill, or your browser didn’t fill the hidden fields.
+              <Icon name="check-circle" size={18} /> Nothing was captured. Either you didn’t use autofill, or your browser didn’t fill the hidden fields.
             </p>
           ) : (
             <>
@@ -77,7 +77,7 @@ export function AutofillDemo() {
                   </div>
                 ))}
               </dl>
-              <p className="small muted">This never left your browser. A real attacker’s form would.</p>
+              <p className="small muted">This never left your browser, but a real attacker’s form would send it.</p>
             </>
           )}
         </div>
