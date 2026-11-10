@@ -1,6 +1,7 @@
 /* TEAM */
 Maker: Vaughn Valle
 Site: https://thewebknows.me
+Website: https://vaughnvalle.com
 GitHub: https://github.com/VaughnValle
 
 /* SITE */

@@ -38,7 +38,7 @@ export function App({ deviceLoaders }: { deviceLoaders?: DeviceLoaders } = {}) {
           <strong>The Web Knows Me</strong> · See what the web already knows about you.
         </p>
         <p>
-          Made by <a href="https://github.com/VaughnValle" target="_blank" rel="noopener noreferrer" className="footer-credit">Vaughn Valle</a>. This site doesn’t use accounts, cookies or analytics.
+          Made by <a href="https://vaughnvalle.com" target="_blank" rel="noopener noreferrer" className="footer-credit">Vaughn Valle</a>. This site doesn’t use accounts, cookies or analytics.
         </p>
       </footer>
     </DeviceProvider>
