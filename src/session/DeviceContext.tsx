@@ -3,7 +3,8 @@ import { collectBasic, collectExtras, type Signals } from '../lib/device/collect
 import { buildItems, type ReportItem } from '../lib/device/report';
 import { fetchWhoAmI, type WhoAmI } from '../lib/device/whoami';
 
-export type WhoStatus = 'loading' | 'ok' | 'unavailable';
+/** 'disabled' means this build has no network lookup at all (the static build). */
+export type WhoStatus = 'loading' | 'ok' | 'unavailable' | 'disabled';
 
 interface DeviceApi {
   signals: Signals | null;
@@ -18,10 +19,16 @@ const Ctx = createContext<DeviceApi>({ signals: null, who: null, whoStatus: 'loa
 export interface DeviceLoaders {
   basic: () => Signals;
   extras: (s: Signals) => Promise<Signals>;
-  whoami: () => Promise<WhoAmI | null>;
+  /** null when this build doesn't look up the connection. */
+  whoami: (() => Promise<WhoAmI | null>) | null;
 }
 
-const defaultLoaders: DeviceLoaders = { basic: collectBasic, extras: collectExtras, whoami: () => fetchWhoAmI() };
+const defaultLoaders: DeviceLoaders = {
+  basic: collectBasic,
+  extras: collectExtras,
+  // Written inline so the static build drops the lookup code from the bundle entirely.
+  whoami: import.meta.env.VITE_NETWORK_LOOKUP !== '0' ? () => fetchWhoAmI() : null,
+};
 
 /**
  * Reads what this browser and connection reveal, once, in memory only.
@@ -32,7 +39,7 @@ export function DeviceProvider({ children, loaders: given }: { children: ReactNo
   const [signals, setSignals] = useState<Signals | null>(null);
   const [extrasReady, setExtrasReady] = useState(false);
   const [who, setWho] = useState<WhoAmI | null>(null);
-  const [whoStatus, setWhoStatus] = useState<WhoStatus>('loading');
+  const [whoStatus, setWhoStatus] = useState<WhoStatus>(loaders.whoami ? 'loading' : 'disabled');
 
   useEffect(() => {
     let alive = true;
@@ -50,14 +57,16 @@ export function DeviceProvider({ children, loaders: given }: { children: ReactNo
         .catch(() => {})
         .finally(() => alive && setExtrasReady(true));
     }
-    loaders
-      .whoami()
-      .then((w) => {
-        if (!alive) return;
-        setWho(w);
-        setWhoStatus(w ? 'ok' : 'unavailable');
-      })
-      .catch(() => alive && setWhoStatus('unavailable'));
+    if (loaders.whoami) {
+      loaders
+        .whoami()
+        .then((w) => {
+          if (!alive) return;
+          setWho(w);
+          setWhoStatus(w ? 'ok' : 'unavailable');
+        })
+        .catch(() => alive && setWhoStatus('unavailable'));
+    }
     return () => {
       alive = false;
     };

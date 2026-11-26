@@ -18,6 +18,24 @@ npm run preview
 
 Hosted on Cloudflare (Workers + Static Assets) at https://thewebknows.me. Cloudflare builds from GitHub on every push (`npm run build` → `dist/`). The build also writes `dist/_headers` with the security headers. Setup steps are in [DEPLOY.md](DEPLOY.md).
 
+## Static build (GitHub Pages)
+
+`npm run build:static` makes a version with no server code at all, for GitHub Pages or any plain file host. It is the same site with one thing removed: the lookup of the visitor's IP address, internet provider and approximate location, because that needs the `/api/whoami` Worker. The lookup code is left out of the bundle, not just switched off.
+
+Everything else is unchanged, since it all runs in the browser: the device and browser details, the fingerprint, the photo, WebRTC and autofill demos, and the username review.
+
+| | Cloudflare build | Static build |
+|---|---|---|
+| Command | `npm run build` | `npm run build:static` |
+| Server code | One Worker endpoint | None |
+| IP, provider, location | Shown | Not looked up |
+| Username checks via GitHub and Bluesky APIs | On | On, or off with `VITE_API_CHECKS=0` |
+| Security headers | `_headers` file | CSP meta tag only |
+
+- Asset paths are relative, so the build works under any URL: `user.github.io/thewebknows/`, a fork with another name, or a custom domain.
+- `.github/workflows/pages.yml` builds and publishes it on every push. Turn it on once under Settings → Pages → Source → GitHub Actions.
+- To also turn off the GitHub and Bluesky checks, uncomment `VITE_API_CHECKS=0` in `.env.static`. Every profile then becomes a link the visitor opens themselves, and the CSP narrows to `connect-src 'self'`, so the page can only load its own static files.
+
 ## Browser reveal (first screen)
 
 Before anyone types anything, the home page shows what every website can already see:

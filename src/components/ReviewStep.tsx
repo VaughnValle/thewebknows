@@ -3,6 +3,7 @@ import { CandidateCard, cardTitle, type Decision } from './CandidateCard';
 import { ExternalLink } from './ExternalLink';
 import { Icon } from './Icon';
 import { useSession } from '../session/SessionContext';
+import { apiChecksEnabled } from '../lib/config';
 import { platformName } from '../lib/platforms/directory';
 import { counts, identityOf, reviewable } from '../lib/report/summary';
 import type { Candidate } from '../lib/platforms/candidates';
@@ -13,13 +14,15 @@ const IDENTITY_LABEL = { mine: 'Mine', 'not-mine': 'Not mine', unsure: 'Unsure',
 const SWIPE_THRESHOLD = 110;
 
 function Legend() {
-  const rows: [Parameters<typeof Icon>[0]['name'], string, string][] = [
+  const all: [Parameters<typeof Icon>[0]['name'], string, string][] = [
     ['check-circle', 'API-confirmed', 'GitHub’s or Bluesky’s API says this username exists. That doesn’t prove it’s yours.'],
     ['external', 'Open to check', 'This is a link that this tool built from your username. It’s not a found account.'],
     ['search', 'Search shortcut', 'This opens that site’s own search.'],
     ['dash-circle', 'Not found by API', 'The API has no account with that exact username.'],
     ['pause', 'Unable to check', 'The API didn’t answer, so you have to open it and check it yourself.'],
   ];
+  // Without the API checks, only the two link labels can ever appear.
+  const rows = apiChecksEnabled() ? all : all.filter(([, term]) => term === 'Open to check' || term === 'Search shortcut');
   return (
     <details className="legend">
       <summary>

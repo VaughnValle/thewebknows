@@ -5,6 +5,7 @@ import { Icon } from './Icon';
 import { RevealWord } from './RevealWord';
 import { Segmented } from './Segmented';
 import { useSession } from '../session/SessionContext';
+import { apiChecksEnabled } from '../lib/config';
 import { MAX_DISPLAY_NAME, MAX_LINKS, MAX_USERNAMES, splitUsernamesAndLinks } from '../lib/platforms/candidates';
 import { PLATFORMS } from '../lib/platforms/directory';
 import { parseProfileLink } from '../lib/platforms/parseLink';
@@ -28,7 +29,7 @@ export function StartStep() {
   const linkPreview = useMemo(() => parsed.links.slice(0, MAX_LINKS).map(parseProfileLink), [parsed.links]);
   const linkPlatforms = linkPreview.flatMap((l) => (l.ok ? [l.platform] : []));
   const lit = PLATFORM_ORDER.filter((p) => input.platforms.includes(p) || linkPlatforms.includes(p));
-  const contacted = lit.filter((p) => PLATFORMS[p].check === 'api').map((p) => PLATFORMS[p].name);
+  const contacted = apiChecksEnabled() ? lit.filter((p) => PLATFORMS[p].check === 'api').map((p) => PLATFORMS[p].name) : [];
 
   const submit = (e: FormEvent) => {
     e.preventDefault();

@@ -3,6 +3,7 @@ import { cleanRawHandle, isNumericFacebookId, normalizeHandle } from './handles'
 import { looksLikeLink, parseProfileLink } from './parseLink';
 import { platformUrl, webSearchUrl } from './safeUrl';
 import { PLATFORM_ORDER, type CandidateBasis, type CandidateKind, type PlatformId } from '../types';
+import { apiChecksEnabled } from '../config';
 
 export const MAX_USERNAMES = 5;
 export const MAX_LINKS = 8;
@@ -109,7 +110,7 @@ export function generateCandidates(input: CandidateInput): CandidateSet {
     const template = platform === 'facebook' && isNumericFacebookId(handle) && def.numericProfileUrl ? def.numericProfileUrl : def.profileUrl;
     const url = platformUrl(platform, template, { handle });
     if (!url) return;
-    const kind: CandidateKind = def.check === 'api' ? 'api' : 'profile';
+    const kind: CandidateKind = def.check === 'api' && apiChecksEnabled() ? 'api' : 'profile';
     add({ id: candidateId(platform, kind, handle), platform, kind, basis, url, handle });
   };
 

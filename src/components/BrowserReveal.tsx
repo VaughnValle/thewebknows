@@ -110,7 +110,7 @@ export function BrowserReveal({ onCheckProfiles }: { onCheckProfiles: () => void
   const whoRef = useRef(whoStatus);
   whoRef.current = whoStatus;
 
-  const showPlace = whoStatus !== 'unavailable';
+  const showPlace = whoStatus === 'ok' || whoStatus === 'loading';
   const sentence = heroSentence(signals, who, showPlace);
   const facts = heroFacts(signals, who);
   const fp = heroFingerprint(signals);

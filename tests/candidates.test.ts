@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { generateCandidates, splitUsernamesAndLinks, MAX_USERNAMES } from '../src/lib/platforms/candidates';
 import { GUIDES, PLATFORMS } from '../src/lib/platforms/directory';
 import { normalizeHandle } from '../src/lib/platforms/handles';
@@ -191,5 +191,22 @@ describe('ordering', () => {
     expect(platforms.indexOf('linkedin')).toBeGreaterThan(platforms.indexOf('facebook'));
     const li = set.candidates.filter((c) => c.platform === 'linkedin').map((c) => c.kind);
     expect(li[li.length - 1]).toBe('search');
+  });
+});
+
+describe('with the API checks turned off (VITE_API_CHECKS=0)', () => {
+  afterEach(() => vi.unstubAllEnvs());
+
+  it('makes every profile a plain link, so nothing is sent to GitHub or Bluesky', () => {
+    vi.stubEnv('VITE_API_CHECKS', '0');
+    const set = generateCandidates({ usernames: ['janedoe'], links: [], displayName: '', platforms: ALL });
+    expect(set.candidates.some((c) => c.kind === 'api')).toBe(false);
+    const github = set.candidates.find((c) => c.platform === 'github' && c.kind === 'profile');
+    expect(github?.url).toBe('https://github.com/janedoe');
+  });
+
+  it('keeps the automatic checks by default', () => {
+    const set = generateCandidates({ usernames: ['janedoe'], links: [], displayName: '', platforms: ALL });
+    expect(set.candidates.filter((c) => c.kind === 'api').map((c) => c.platform).sort()).toEqual(['bluesky', 'github']);
   });
 });

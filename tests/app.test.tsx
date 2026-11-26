@@ -66,13 +66,13 @@ HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) {
 };
 window.scrollTo = vi.fn() as unknown as typeof window.scrollTo;
 
-function setup(replies: Reply[]) {
+function setup(replies: Reply[], loaders: DeviceLoaders = deviceLoaders) {
   const f = scriptedFetch(replies);
   const service = () => new CheckService(deps(f.fetch, Date.now()));
   const user = userEvent.setup();
   render(
     <SessionProvider createService={service}>
-      <App deviceLoaders={deviceLoaders} />
+      <App deviceLoaders={loaders} />
     </SessionProvider>,
   );
   return { user, f };
@@ -238,6 +238,20 @@ describe('end-to-end flow (mocked APIs)', () => {
     await user.click(screen.getByRole('button', { name: /which sites you’re logged into/i }));
     const social = await screen.findByText(/never touches your accounts/i);
     expect(social).toBeVisible();
+  });
+
+  it('static build: shows no network details and says why', async () => {
+    // The static build passes no whoami loader at all.
+    const { user } = setup([], { ...deviceLoaders, whoami: null });
+    const sentence = (await screen.findAllByText(/You’re on/))[0].closest('p')!;
+    expect(sentence).toHaveTextContent(/a Mac/);
+    expect(sentence).not.toHaveTextContent(/You’re in/);
+    expect(screen.queryByText('203.0.113.42')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /see all \d+ details/i }));
+    expect(screen.getByText(/purely static, so it doesn’t look up your IP address/i)).toBeInTheDocument();
+    // The rest of the report is still there.
+    expect(screen.getByRole('button', { name: /^Your device$/i })).toBeInTheDocument();
   });
 
   it('adds browser fixes to the summary', async () => {

@@ -232,7 +232,11 @@ export function DeviceReport() {
     } else if (g.id === 'network') {
       body = (
         <p className="report-blurb">
-          {whoStatus === 'loading' ? 'Looking up your connection…' : 'This site couldn’t look up your connection right now, but other sites still can.'}
+          {whoStatus === 'loading'
+            ? 'Looking up your connection…'
+            : whoStatus === 'disabled'
+              ? 'This version of the site is purely static, so it doesn’t look up your IP address, internet provider or location. Keep in mind that any site with a server can still see them the moment you connect.'
+              : 'This site couldn’t look up your connection right now, but other sites still can.'}
         </p>
       );
     } else {
